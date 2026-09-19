@@ -1,7 +1,7 @@
 # LZY Project Status
 
 **Last updated:** 2026-09-19
-**Version:** 0.0.1
+**Version:** 0.0.2
 **Phase:** Phase 7 complete — *LZY 0.0.1, Language Foundation*
 **Next milestone:** 0.1.0 — Core Language Stable
 
@@ -26,13 +26,13 @@ they disagree, the repository is right and this file is stale.
 | Built-in functions | **READY** | 33, all typed and tested |
 | Specification | **READY** | SPEC.md matches the implementation |
 | Formal grammar | **READY** | `docs/spec/grammar.ebnf` |
-| Tests | **READY** | 1156 passing, including 420 fuzz cases |
+| Tests | **READY** | 1170 passing, including 420 fuzz cases |
 | Examples | **READY** | 22, each with recorded output under test |
 | Security limits | **READY** | Enforced in one place, tested |
 | Packaging | **READY** | `pip install -e .` gives the `lzy` command |
-| CI | **READY** | GitHub Actions, 3 platforms × 5 Python versions |
+| CI | **READY** | 19/19 green on 3 platforms × 5 Python versions, verified |
 | Learning course | **IN PROGRESS** | Levels 1-5 written, 6-9 outstanding |
-| GitHub repository | **BLOCKED** | Needs the owner — see *Blocked* below |
+| GitHub repository | **READY** | github.com/rishav9713/lzy, public, protected |
 | Error handling in LZY | **NOT IMPLEMENTED** | No `try`/`catch`; planned for 0.1.0 |
 | Modules | **NOT IMPLEMENTED** | Planned for 0.2.0 |
 | Standard library | **NOT IMPLEMENTED** | Built-ins only; planned for 0.2.0 |
@@ -44,7 +44,7 @@ they disagree, the repository is right and this file is stale.
 | Package manager | **NOT IMPLEMENTED** | Deliberately not started |
 | Bytecode VM | **NOT IMPLEMENTED** | Planned for 0.5.0 |
 | Playground | **NOT IMPLEMENTED** | Needs real isolation before it exists |
-| Released artifacts | **NOT STARTED** | Nothing has been published anywhere |
+| Released artifacts | **READY** | Wheel and sdist, built, checksummed and published on GitHub Releases. CHANGELOG.md lists which versions exist. |
 
 ---
 
@@ -78,11 +78,12 @@ Everything in this list has a test behind it.
 
 **Quality**
 
-- 1156 tests: unit, integration, negative, regression, security, and 420
+- 1170 tests: unit, integration, negative, regression, security, and 420
   fuzz cases.
 - Every example has a recorded `.out` file that is compared on every run, so
   documentation cannot drift from behaviour.
-- CI on Ubuntu, macOS and Windows against Python 3.9 through 3.13.
+- CI on Ubuntu, macOS and Windows against Python 3.9 through 3.13, all 19
+  jobs green on `main`.
 
 ---
 
@@ -108,8 +109,9 @@ These are design gaps, not bugs. They are listed in
 
 ## Known bugs
 
-None open. Six were found and fixed during the 0.0.1 build; each has a
-regression test in `tests/regression/test_regressions.py`:
+None open. Seven have been found and fixed; each has a regression test in
+`tests/regression/test_regressions.py`. Number 007 was found by CI, not by a
+person, which is the whole argument for having it:
 
 | # | Bug | Fixed by |
 |---|---|---|
@@ -119,6 +121,7 @@ regression test in `tests/regression/test_regressions.py`:
 | 004 | A file path with spaces was wrapped across two lines | Paths use an unwrapped `detail` line |
 | 005 | `--debug` printed the error twice and ate the traceback | `main` re-raises instead of reporting again |
 | 006 | Python's recursion limit stayed raised after a run | Restored in a `finally` |
+| 007 | A deep expression crashed the process on Windows 3.9/3.10 | Tree-depth and live-nesting limits, plus a stack LZY sets |
 
 ---
 
@@ -143,33 +146,12 @@ isolation. See [SECURITY.md](SECURITY.md).
 
 ## Blocked
 
-**B-1: The public GitHub repository does not exist yet.**
+Nothing.
 
-Everything is committed locally on `main` and tagged `v0.0.1`. The repository
-name `rishav9713/lzy` was checked and is free. The GitHub CLI has been
-installed (gh 2.101.0), but **it is not authenticated**, and authenticating
-needs a browser sign-in that only the owner can complete. Asking for a token
-in chat is not an acceptable substitute.
-
-What the owner does, once:
-
-```bash
-gh auth login
-```
-
-Choose: GitHub.com -> HTTPS -> authenticate in browser. After that, the rest
-can be done from a session:
-
-1. `gh repo create rishav9713/lzy --public --source=. --remote=origin --push`
-2. `git push origin v0.0.1`
-3. `gh release create v0.0.1 --notes-file docs/releases/v0.0.1.md` with the
-   wheel, sdist and SHA256SUMS.txt attached
-4. Enable Issues, Discussions, Dependabot, secret scanning and code
-   scanning; protect `main` behind a passing CI check
-
-Note for awareness, not a conflict: an unrelated `lambdazy/lzy` exists on
-GitHub with a different owner, and the owner's own `lzy-xss` repo is an
-unrelated 2023 project.
+The repository is live at **https://github.com/rishav9713/lzy**, public, with
+Issues, Discussions, Dependabot, secret scanning with push protection, and
+private vulnerability reporting all enabled. `main` is protected: pull request
+required, all 19 CI checks required, linear history, no force pushes.
 
 ---
 

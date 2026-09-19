@@ -199,3 +199,20 @@ class TestRepl:
     )
     def test_which_lines_start_a_block(self, line, expected):
         assert _opens_block(line) is expected
+
+
+class TestVersionIsSingleSourced:
+    """``lzy --version`` reports the package's own version.
+
+    pyproject declares the version dynamically from ``lzy.__version__``, so
+    the package and its packaging metadata cannot drift apart by editing one
+    and forgetting the other. That the *built* metadata matches is checked in
+    CI's Package job, where a fresh build actually happens; asserting it here
+    would only test whether the developer had reinstalled since their last
+    version bump.
+    """
+
+    def test_the_cli_reports_the_package_version(self, capsys):
+        with pytest.raises(SystemExit):
+            main(["--version"])
+        assert capsys.readouterr().out.strip() == f"LZY {__version__}"

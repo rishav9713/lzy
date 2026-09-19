@@ -88,6 +88,17 @@ jobs:
         run: python -m build
       - name: Check the metadata
         run: python -m twine check dist/*
+      - name: Check the built version matches lzy.__version__
+        run: |
+          python - <<'EOF'
+          import pathlib, re, sys
+          source = pathlib.Path("lzy/__init__.py").read_text(encoding="utf-8")
+          expected = re.search(r'__version__ = "([^"]+)"', source).group(1)
+          built = sorted(p.name for p in pathlib.Path("dist").glob("*.whl"))
+          print("expected", expected, "| built", built)
+          if not any(f"-{expected}-" in name for name in built):
+              sys.exit(f"built wheel does not carry version {expected}")
+          EOF
       - name: Install the built wheel into a clean environment and run it
         run: |
           python -m venv /tmp/fresh

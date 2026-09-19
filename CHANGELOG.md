@@ -12,6 +12,60 @@ the reason.
 
 Nothing yet.
 
+## [0.0.2] - 2026-09-19
+
+A correctness release. 0.0.1 could crash the interpreter process on Windows,
+and the first CI run found it within minutes of publishing. **Anyone on
+Windows with Python 3.9 or 3.10 should upgrade.**
+
+### Fixed
+
+- **A deep expression killed the interpreter process on Windows with CPython
+  3.9 and 3.10.** `say 1 + 1 + 1 + ...` with a couple of thousand terms
+  produced a fatal stack overflow rather than an LZY error.
+
+  Two mistakes compounded. A long operator chain is *parsed* by a loop but
+  *evaluated* by recursion, so `max_parse_depth` never fired on that shape.
+  And `python_recursion_limit` had been raised to 20,000, which does not
+  create stack — it only removes CPython's guard, so on the 1 MB stack
+  Windows gives the main thread it turned a catchable error into a crash.
+  CPython 3.11 stopped consuming C stack for Python-to-Python calls, which is
+  why 3.11 and later were unaffected.
+
+- **`max_call_depth` was not actually reachable on Windows with Python 3.9 or
+  3.10.** 400 LZY calls is several thousand Python frames, which did not fit
+  in 1 MB. A documented, advertised limit did not work on one platform.
+
+- All 150 `ruff` findings, which had the CI lint job failing.
+
+### Added
+
+- `max_ast_depth` (5,000; 1,000 under `--safe`) bounds the syntax tree the
+  parser returns, measured by an iterative walk after parsing. Because it is
+  a parse-time check, `lzy check` reports it too.
+- `max_evaluation_depth` (5,000; 1,000 under `--safe`) bounds total live
+  nesting while a program runs, catching shapes the other limits miss.
+- `thread_stack_bytes` (64 MB). Programs now run on a thread whose stack size
+  LZY sets, so the documented limits mean the same thing on every platform
+  instead of depending on what the operating system happened to provide.
+- `children()` and `deepest_node()` in `lzy.ast.nodes`, derived from the
+  dataclass fields so a new node type is walked correctly the day it is added.
+
+### Changed
+
+- The version is declared once, in `lzy/__init__.py`. `pyproject.toml` reads
+  it, so the package and its metadata cannot disagree.
+- `ruff` is pinned to `>=0.16,<0.17`, so a new linter release cannot turn CI
+  red on a branch that changed nothing.
+- `_scan_operator` in the lexer drives `=`, `<` and `>` from one table
+  instead of three near-identical branches.
+
+### Security
+
+- SECURITY.md claimed LZY "never crashes the process". **That was false on
+  Windows.** The hardening table now lists the three new mitigations and names
+  the crash that prompted them.
+
 ## [0.0.1] - 2026-09-19
 
 The first working version of LZY. The core language runs, is specified and is
@@ -118,5 +172,6 @@ test in `tests/regression/test_regressions.py`.
   to show.
 - Python's recursion limit stayed raised after a program finished.
 
-[Unreleased]: https://github.com/rishav9713/lzy/compare/v0.0.1...HEAD
+[Unreleased]: https://github.com/rishav9713/lzy/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/rishav9713/lzy/releases/tag/v0.0.2
 [0.0.1]: https://github.com/rishav9713/lzy/releases/tag/v0.0.1
