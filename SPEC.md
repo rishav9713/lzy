@@ -101,7 +101,7 @@ say "hi"    # A comment at the end of a line.
 
 **LZY is case-insensitive.** These are all the same name:
 
-```lzy
+```text
 total    Total    TOTAL    ToTaL
 ```
 

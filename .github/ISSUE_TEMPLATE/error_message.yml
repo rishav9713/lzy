@@ -1,0 +1,38 @@
+name: Confusing error message
+description: An error message left you guessing
+labels: ["error-messages", "good-first-issue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Error messages are a feature of LZY, so a confusing one is a real bug.
+
+  - type: textarea
+    id: program
+    attributes:
+      label: The program
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: message
+    attributes:
+      label: The message LZY gave you
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: confusion
+    attributes:
+      label: What was unclear
+      description: What did you think it meant? What did you have to work out for yourself?
+    validations:
+      required: true
+
+  - type: textarea
+    id: better
+    attributes:
+      label: What would have helped
+      description: Even a rough wording is useful.

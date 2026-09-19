@@ -1,0 +1,51 @@
+name: Bug report
+description: Something in LZY behaves incorrectly
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for the report.
+
+        **Please do not report security problems here.** Use
+        [SECURITY.md](../blob/main/SECURITY.md) instead.
+
+  - type: textarea
+    id: program
+    attributes:
+      label: The smallest program that shows the problem
+      description: A complete .lzy program, as short as you can make it.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected to happen
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What actually happened
+      description: Include the whole error message, if there was one.
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: LZY version
+      description: The output of `lzy --version`
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Python version and operating system
+      placeholder: "Python 3.12.1, Windows 11"
+    validations:
+      required: true

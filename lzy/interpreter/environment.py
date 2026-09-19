@@ -68,26 +68,7 @@ class Environment:
             scope = scope.parent
         self.define(folded, name, value)
 
-    def original_spelling(self, folded: str) -> Optional[str]:
-        scope: Optional[Environment] = self
-        while scope is not None:
-            found = scope.values.get(folded)
-            if found is not None:
-                return found[0]
-            scope = scope.parent
-        return None
-
     # ------------------------------------------------------------------
-
-    def visible_names(self) -> List[str]:
-        """Every name reachable from here, using the user's own spelling."""
-        seen: Dict[str, str] = {}
-        scope: Optional[Environment] = self
-        while scope is not None:
-            for folded, (name, _value) in scope.values.items():
-                seen.setdefault(folded, name)
-            scope = scope.parent
-        return sorted(seen.values())
 
     def closest_names(self, folded: str, limit: int = 3) -> List[str]:
         """Names that look like a likely typo for ``folded``."""

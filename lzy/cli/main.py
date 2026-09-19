@@ -21,7 +21,6 @@ EXTENSION = ".lzy"
 
 EXIT_OK = 0
 EXIT_ERROR = 1
-EXIT_USAGE = 2
 
 DESCRIPTION = "LZY - complex logic, simple code."
 

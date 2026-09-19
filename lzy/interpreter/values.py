@@ -118,19 +118,6 @@ def describe(value) -> str:
     }.get(type_name(value), "an unknown kind of value")
 
 
-def describe_type_name(name: str) -> str:
-    """Same as :func:`describe` but starting from a type name."""
-    return {
-        "nothing": "nothing",
-        "truth": "a yes/no value",
-        "number": "a number",
-        "text": "some text",
-        "list": "a list",
-        "map": "a map",
-        "function": "a function",
-    }.get(name, "an unknown kind of value")
-
-
 def format_number(value) -> str:
     if isinstance(value, int):
         return str(value)

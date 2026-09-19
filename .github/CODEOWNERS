@@ -1,0 +1,13 @@
+# Everything needs a maintainer's review by default.
+* @OWNER
+
+# The specification, the grammar and the security policy define what LZY is.
+# Changes to them should never land without a deliberate look.
+/SPEC.md            @OWNER
+/docs/spec/         @OWNER
+/SECURITY.md        @OWNER
+/docs/leps/         @OWNER
+/lzy/runtime/       @OWNER
+/.github/           @OWNER
+
+# Replace @OWNER with your GitHub username when the repository is created.

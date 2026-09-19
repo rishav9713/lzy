@@ -1,0 +1,35 @@
+name: Language idea
+description: Suggest a change to the LZY language
+labels: ["language"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ideas are welcome. Discuss it here first; if it goes ahead it will
+        need a [LEP](../blob/main/docs/leps/README.md) before any code.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is awkward or impossible today
+      description: Show real LZY code.
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: What you would like instead
+      description: Show how it would be written.
+    validations:
+      required: true
+
+  - type: textarea
+    id: cost
+    attributes:
+      label: What it would cost
+      description: |
+        More syntax to learn? A new keyword? A way to write something unclear?
+        An honest answer here makes the idea more likely to be accepted, not less.
+    validations:
+      required: true

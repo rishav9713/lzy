@@ -1,0 +1,21 @@
+version: 2
+updates:
+  # LZY's interpreter has no runtime dependencies, so this covers the
+  # development and CI tooling only.
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels: ["dependencies", "security"]
+    commit-message:
+      prefix: "chore"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels: ["dependencies", "ci", "security"]
+    commit-message:
+      prefix: "ci"
