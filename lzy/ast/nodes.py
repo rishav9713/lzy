@@ -7,7 +7,6 @@ it came from so that runtime errors can point back at the exact source text.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import List, Optional, Tuple
 
 from lzy.errors import Span
 
@@ -36,14 +35,14 @@ class Literal(Expression):
 
 @dataclass
 class ListLiteral(Expression):
-    items: List[Expression]
+    items: list[Expression]
 
 
 @dataclass
 class MapLiteral(Expression):
     #: Key/value pairs in source order. Keys are expressions so that
     #: ``{ name: value }`` and ``{ "name": value }`` share one code path.
-    entries: List[Tuple[Expression, Expression]]
+    entries: list[tuple[Expression, Expression]]
 
 
 @dataclass
@@ -66,7 +65,7 @@ class Binary(Expression):
     left: Expression
     right: Expression
     #: Span of the operator itself, so errors underline the operator.
-    operator_span: Optional[Span] = None
+    operator_span: Span | None = None
 
 
 @dataclass
@@ -81,7 +80,7 @@ class Logical(Expression):
 @dataclass
 class Call(Expression):
     callee: Expression
-    arguments: List[Expression]
+    arguments: list[Expression]
 
 
 @dataclass
@@ -105,7 +104,7 @@ class Member(Expression):
 class Ask(Expression):
     """``ask "question"`` reads a line from the user."""
 
-    prompt: Optional[Expression] = None
+    prompt: Expression | None = None
 
 
 # ----------------------------------------------------------------------
@@ -120,7 +119,7 @@ class Statement(Node):
 
 @dataclass
 class Block(Node):
-    statements: List[Statement] = field(default_factory=list)
+    statements: list[Statement] = field(default_factory=list)
 
 
 @dataclass
@@ -130,7 +129,7 @@ class Program(Node):
 
 @dataclass
 class Say(Statement):
-    values: List[Expression]
+    values: list[Expression]
 
 
 @dataclass
@@ -151,7 +150,7 @@ class If(Statement):
     condition: Expression
     then_branch: Block
     #: Either a Block (``else``) or a nested If (``else if``), or None.
-    else_branch: Optional[Node] = None
+    else_branch: Node | None = None
 
 
 @dataclass
@@ -174,13 +173,13 @@ class FunctionDef(Statement):
     name: str
     folded: str
     #: Parameters as (original spelling, folded name).
-    parameters: List[Tuple[str, str]]
+    parameters: list[tuple[str, str]]
     body: Block
 
 
 @dataclass
 class Return(Statement):
-    value: Optional[Expression] = None
+    value: Expression | None = None
 
 
 @dataclass

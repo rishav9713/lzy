@@ -42,7 +42,7 @@ class Limits:
     #: Longest text value ``say`` will print in one go, in characters.
     max_output_characters: int = 1_000_000
 
-    def sandboxed(self) -> "Limits":
+    def sandboxed(self) -> Limits:
         """A tighter profile for running code you do not trust."""
         return replace(
             self,

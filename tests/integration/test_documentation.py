@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import List, Tuple
 
 import pytest
 
@@ -32,7 +31,7 @@ FENCE = re.compile(
 SKIP_DIRECTORIES = {".git", "__pycache__", ".pytest_cache", "node_modules", "build", "dist"}
 
 
-def documentation_files() -> List[Path]:
+def documentation_files() -> list[Path]:
     found = [
         path
         for path in PROJECT_ROOT.rglob("*.md")
@@ -41,7 +40,7 @@ def documentation_files() -> List[Path]:
     return sorted(found)
 
 
-def snippets(tag: str) -> List[Tuple[str, int, str]]:
+def snippets(tag: str) -> list[tuple[str, int, str]]:
     """Every fenced block with this tag, as (file, line, code)."""
     found = []
     for path in documentation_files():

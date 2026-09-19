@@ -14,7 +14,7 @@ from __future__ import annotations
 import math
 import random as _random
 from dataclasses import dataclass
-from typing import Callable, Dict, List, Optional
+from typing import Callable
 
 from lzy.errors import LzyTypeError, LzyValueError, Span
 from lzy.interpreter.values import (
@@ -23,10 +23,10 @@ from lzy.interpreter.values import (
     describe,
     equal,
     format_number,
+    inspect,
     is_hashable_key,
     is_number,
     is_truth,
-    inspect,
     normalise_number,
     show,
     type_name,
@@ -46,10 +46,10 @@ class CallContext:
     span: Span
     name: str
 
-    def type_error(self, message: str, hint: Optional[str] = None) -> LzyTypeError:
+    def type_error(self, message: str, hint: str | None = None) -> LzyTypeError:
         return LzyTypeError(message, self.span, hint=hint)
 
-    def value_error(self, message: str, hint: Optional[str] = None) -> LzyValueError:
+    def value_error(self, message: str, hint: str | None = None) -> LzyValueError:
         return LzyValueError(message, self.span, hint=hint)
 
     def wrong_type(self, position: int, expected: str, got, hint=None) -> LzyTypeError:
@@ -63,10 +63,10 @@ class CallContext:
 
 _ORDINALS = {0: "first", 1: "second", 2: "third", 3: "fourth", 4: "fifth"}
 
-BUILTINS: Dict[str, NativeFunction] = {}
+BUILTINS: dict[str, NativeFunction] = {}
 
 
-def builtin(name: str, min_args: int, max_args: Optional[int], summary: str) -> Callable:
+def builtin(name: str, min_args: int, max_args: int | None, summary: str) -> Callable:
     def register(function: Callable) -> Callable:
         BUILTINS[name] = NativeFunction(name, min_args, max_args, function, summary)
         return function
@@ -79,21 +79,21 @@ def builtin(name: str, min_args: int, max_args: Optional[int], summary: str) -> 
 # ----------------------------------------------------------------------
 
 
-def _text(ctx: CallContext, args: List, index: int) -> str:
+def _text(ctx: CallContext, args: list, index: int) -> str:
     value = args[index]
     if not isinstance(value, str):
         raise ctx.wrong_type(index, "some text", value)
     return value
 
 
-def _number(ctx: CallContext, args: List, index: int):
+def _number(ctx: CallContext, args: list, index: int):
     value = args[index]
     if not is_number(value):
         raise ctx.wrong_type(index, "a number", value)
     return value
 
 
-def _whole_number(ctx: CallContext, args: List, index: int) -> int:
+def _whole_number(ctx: CallContext, args: list, index: int) -> int:
     value = _number(ctx, args, index)
     if isinstance(value, float):
         if not value.is_integer():
@@ -106,14 +106,14 @@ def _whole_number(ctx: CallContext, args: List, index: int) -> int:
     return value
 
 
-def _list(ctx: CallContext, args: List, index: int) -> list:
+def _list(ctx: CallContext, args: list, index: int) -> list:
     value = args[index]
     if not isinstance(value, list):
         raise ctx.wrong_type(index, "a list", value)
     return value
 
 
-def _map(ctx: CallContext, args: List, index: int) -> dict:
+def _map(ctx: CallContext, args: list, index: int) -> dict:
     value = args[index]
     if not isinstance(value, dict):
         raise ctx.wrong_type(index, "a map", value)
@@ -257,7 +257,9 @@ def _sum(ctx, args):
     return normalise_number(total)
 
 
-@builtin("random_number", 2, 2, "A random whole number between two values, both included.")
+@builtin(
+    "random_number", 2, 2, "A random whole number between two values, both included."
+)
 def _random_number(ctx, args):
     low = _whole_number(ctx, args, 0)
     high = _whole_number(ctx, args, 1)

@@ -14,7 +14,6 @@ from lzy.ast.nodes import (
     FunctionDef,
     If,
     Index,
-    ListLiteral,
     Literal,
     Logical,
     MapLiteral,

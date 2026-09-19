@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import textwrap
 from dataclasses import dataclass, field
-from typing import Optional
 
 # How many characters of a source line we show before truncating it.
 MAX_SOURCE_LINE = 200
@@ -44,11 +43,11 @@ class LzyError(Exception):
     def __init__(
         self,
         message: str,
-        span: Optional[Span] = None,
+        span: Span | None = None,
         *,
-        hint: Optional[str] = None,
-        suggestion: Optional[str] = None,
-        detail: Optional[str] = None,
+        hint: str | None = None,
+        suggestion: str | None = None,
+        detail: str | None = None,
     ) -> None:
         super().__init__(message)
         self.message = message
@@ -60,7 +59,7 @@ class LzyError(Exception):
         #: wrapped, so that it can be read and copied in one piece.
         self.detail = detail
 
-    def render(self, source: Optional[str] = None) -> str:
+    def render(self, source: str | None = None) -> str:
         """Format this error as the block of text the user sees."""
         return _render(self, source)
 
@@ -135,7 +134,7 @@ class _Rendered:
         return "\n".join(self.parts)
 
 
-def _render(error: LzyError, source: Optional[str]) -> str:
+def _render(error: LzyError, source: str | None) -> str:
     out = _Rendered()
     span = error.span
 
@@ -178,7 +177,7 @@ def _render(error: LzyError, source: Optional[str]) -> str:
     return out.text()
 
 
-def _snippet(source: Optional[str], span: Optional[Span]) -> list:
+def _snippet(source: str | None, span: Span | None) -> list:
     """Build the ``    code`` / ``    ^^^^`` pair of lines, if we can."""
     if source is None or span is None or span.line <= 0:
         return []

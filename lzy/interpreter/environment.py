@@ -17,15 +17,14 @@ value so that diagnostics and tooling can echo their own casing back to them.
 from __future__ import annotations
 
 import difflib
-from typing import Dict, List, Optional, Tuple
 
 
 class Environment:
     __slots__ = ("values", "parent", "label")
 
-    def __init__(self, parent: Optional["Environment"] = None, label: str = "global") -> None:
+    def __init__(self, parent: Environment | None = None, label: str = "global") -> None:
         #: folded name -> (original spelling, value)
-        self.values: Dict[str, Tuple[str, object]] = {}
+        self.values: dict[str, tuple[str, object]] = {}
         self.parent = parent
         self.label = label
 
@@ -36,7 +35,7 @@ class Environment:
         self.values[folded] = (name, value)
 
     def has(self, folded: str) -> bool:
-        scope: Optional[Environment] = self
+        scope: Environment | None = self
         while scope is not None:
             if folded in scope.values:
                 return True
@@ -49,7 +48,7 @@ class Environment:
         Raises ``KeyError`` when the name is unknown; the interpreter turns
         that into a friendly :class:`~lzy.errors.LzyNameError`.
         """
-        scope: Optional[Environment] = self
+        scope: Environment | None = self
         while scope is not None:
             found = scope.values.get(folded)
             if found is not None:
@@ -59,7 +58,7 @@ class Environment:
 
     def assign(self, folded: str, name: str, value: object) -> None:
         """Store into the nearest scope that already knows this name."""
-        scope: Optional[Environment] = self
+        scope: Environment | None = self
         while scope is not None:
             if folded in scope.values:
                 existing_name = scope.values[folded][0]
@@ -70,10 +69,10 @@ class Environment:
 
     # ------------------------------------------------------------------
 
-    def closest_names(self, folded: str, limit: int = 3) -> List[str]:
+    def closest_names(self, folded: str, limit: int = 3) -> list[str]:
         """Names that look like a likely typo for ``folded``."""
         candidates = {}
-        scope: Optional[Environment] = self
+        scope: Environment | None = self
         while scope is not None:
             for key, (name, _value) in scope.values.items():
                 candidates.setdefault(key, name)

@@ -8,7 +8,6 @@ starts a continuation: the REPL keeps reading until a blank line finishes it.
 from __future__ import annotations
 
 import sys
-from typing import List, Optional
 
 from lzy import __version__
 from lzy.ast.nodes import ExpressionStatement
@@ -48,9 +47,9 @@ _QUIT = {"exit", "quit", "bye"}
 
 
 def run_repl(
-    limits: Optional[Limits] = None,
+    limits: Limits | None = None,
     debug: bool = False,
-    input_lines: Optional[List[str]] = None,
+    input_lines: list[str] | None = None,
 ) -> int:
     """Start a REPL. ``input_lines`` drives it from a list, for testing."""
     limits = limits or Limits()
@@ -60,7 +59,7 @@ def run_repl(
     if scripted is None:
         print(BANNER)
 
-    buffer: List[str] = []
+    buffer: list[str] = []
     while True:
         prompt = CONTINUATION if buffer else PROMPT
         try:
@@ -108,7 +107,9 @@ def _opens_block(line: str) -> bool:
     return first in {"if", "else", "while", "for", "function"}
 
 
-def _run_chunk(interpreter: Interpreter, source: str, limits: Limits, debug: bool) -> None:
+def _run_chunk(
+    interpreter: Interpreter, source: str, limits: Limits, debug: bool
+) -> None:
     try:
         program = parse(tokenize(source, "<repl>", limits), limits)
     except LzyError as error:

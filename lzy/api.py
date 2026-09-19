@@ -8,7 +8,7 @@ same way, and all report errors the same way.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Callable, List, Optional
+from typing import Callable
 
 from lzy.ast.nodes import Program
 from lzy.errors import LzyError
@@ -22,8 +22,8 @@ from lzy.runtime.limits import Limits
 class Result:
     """What happened when a program ran."""
 
-    output: List[str] = field(default_factory=list)
-    error: Optional[LzyError] = None
+    output: list[str] = field(default_factory=list)
+    error: LzyError | None = None
 
     @property
     def ok(self) -> bool:
@@ -36,7 +36,7 @@ class Result:
 
 
 def compile_source(
-    source: str, file: str = "<input>", limits: Optional[Limits] = None
+    source: str, file: str = "<input>", limits: Limits | None = None
 ) -> Program:
     """Turn LZY source into an AST. Raises :class:`LzyError` on bad input."""
     limits = limits or Limits()
@@ -47,16 +47,16 @@ def run_source(
     source: str,
     file: str = "<input>",
     *,
-    limits: Optional[Limits] = None,
-    output: Optional[Callable[[str], None]] = None,
-    read_line: Optional[Callable[[str], str]] = None,
+    limits: Limits | None = None,
+    output: Callable[[str], None] | None = None,
+    read_line: Callable[[str], str] | None = None,
 ) -> Result:
     """Run LZY source and collect the outcome.
 
     Errors are returned on the :class:`Result` rather than raised, because
     every caller needs to render them with the source text alongside.
     """
-    collected: List[str] = []
+    collected: list[str] = []
 
     def collect(line: str) -> None:
         collected.append(line)

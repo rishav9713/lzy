@@ -7,8 +7,6 @@ indentation carry no meaning, which lets long lists and calls wrap naturally.
 
 from __future__ import annotations
 
-from typing import List, Optional
-
 from lzy.errors import LzySyntaxError, Span
 from lzy.lexer.tokens import KEYWORDS, RESERVED, Token, TokenType, fold
 from lzy.runtime.limits import Limits
@@ -50,7 +48,7 @@ class Lexer:
         self,
         source: str,
         file: str = "<input>",
-        limits: Optional[Limits] = None,
+        limits: Limits | None = None,
     ) -> None:
         self.limits = limits or Limits()
         self.file = file
@@ -58,11 +56,11 @@ class Lexer:
         self.pos = 0
         self.line = 1
         self.line_start = 0
-        self.tokens: List[Token] = []
-        self.indents: List[int] = [0]
+        self.tokens: list[Token] = []
+        self.indents: list[int] = [0]
         #: Stack of open brackets as (character, span) so we can report the
         #: opening location when one is never closed.
-        self.brackets: List[tuple] = []
+        self.brackets: list[tuple] = []
         #: True when nothing but layout has been emitted on the current line.
         self.line_is_empty = True
 
@@ -123,7 +121,7 @@ class Lexer:
     # Main loop
     # ------------------------------------------------------------------
 
-    def tokenize(self) -> List[Token]:
+    def tokenize(self) -> list[Token]:
         self._handle_line_start()
         while not self.at_end():
             self._scan_token()
@@ -253,7 +251,8 @@ class Lexer:
 
         while width < self.indents[-1]:
             self.indents.pop()
-            self.tokens.append(Token(TokenType.DEDENT, "", Span(self.line, 1, 1, self.file)))
+            here = Span(self.line, 1, 1, self.file)
+            self.tokens.append(Token(TokenType.DEDENT, "", here))
         if width != self.indents[-1]:
             levels = ", ".join(str(i) for i in self.indents)
             raise LzySyntaxError(
@@ -270,7 +269,9 @@ class Lexer:
 
     def _scan_number(self, start_pos: int, start_line: int, start_col: int) -> None:
         def digits() -> None:
-            while self.peek().isdigit() or (self.peek() == "_" and self.peek(1).isdigit()):
+            while self.peek().isdigit() or (
+                self.peek() == "_" and self.peek(1).isdigit()
+            ):
                 self.advance()
 
         digits()
@@ -310,7 +311,7 @@ class Lexer:
 
     def _scan_text(self, start_pos: int, start_line: int, start_col: int) -> None:
         quote = self.advance()
-        chunks: List[str] = []
+        chunks: list[str] = []
         while True:
             if self.at_end() or self.peek() == "\n":
                 raise LzySyntaxError(
@@ -409,18 +410,34 @@ class Lexer:
     def _scan_operator(self, start_pos: int, start_line: int, start_col: int) -> None:
         ch = self.advance()
 
-        if ch == "=":
+        def emit(token_type: TokenType, text: str) -> None:
+            """Add a token spanning from where this operator started to here.
+
+            The span has to be taken at emit time rather than up front, because
+            a two-character operator advances between the two.
+            """
+            self.add(token_type, text, self.span(start_pos, start_line, start_col))
+
+        #: One-character operator -> the two-character operator it may begin,
+        #: when the next character is "=".
+        paired = {
+            "=": (TokenType.ASSIGN, TokenType.EQUAL),
+            "<": (TokenType.LESS, TokenType.LESS_EQUAL),
+            ">": (TokenType.GREATER, TokenType.GREATER_EQUAL),
+        }
+        if ch in paired:
+            alone, with_equals = paired[ch]
             if self.peek() == "=":
                 self.advance()
-                self.add(TokenType.EQUAL, "==", self.span(start_pos, start_line, start_col))
+                emit(with_equals, ch + "=")
             else:
-                self.add(TokenType.ASSIGN, "=", self.span(start_pos, start_line, start_col))
+                emit(alone, ch)
             return
 
         if ch == "!":
             if self.peek() == "=":
                 self.advance()
-                self.add(TokenType.NOT_EQUAL, "!=", self.span(start_pos, start_line, start_col))
+                emit(TokenType.NOT_EQUAL, "!=")
                 return
             raise LzySyntaxError(
                 "LZY does not use '!' on its own.",
@@ -430,24 +447,6 @@ class Lexer:
                     "two values are different."
                 ),
             )
-
-        if ch == "<":
-            if self.peek() == "=":
-                self.advance()
-                self.add(TokenType.LESS_EQUAL, "<=", self.span(start_pos, start_line, start_col))
-            else:
-                self.add(TokenType.LESS, "<", self.span(start_pos, start_line, start_col))
-            return
-
-        if ch == ">":
-            if self.peek() == "=":
-                self.advance()
-                self.add(
-                    TokenType.GREATER_EQUAL, ">=", self.span(start_pos, start_line, start_col)
-                )
-            else:
-                self.add(TokenType.GREATER, ">", self.span(start_pos, start_line, start_col))
-            return
 
         if ch in _OPENERS:
             span = self.span(start_pos, start_line, start_col)
@@ -494,6 +493,8 @@ class Lexer:
         )
 
 
-def tokenize(source: str, file: str = "<input>", limits: Optional[Limits] = None) -> List[Token]:
+def tokenize(
+    source: str, file: str = "<input>", limits: Limits | None = None
+) -> list[Token]:
     """Tokenize ``source``. Convenience wrapper around :class:`Lexer`."""
     return Lexer(source, file, limits).tokenize()

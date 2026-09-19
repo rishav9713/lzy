@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Callable, List, Optional, Tuple
+from typing import Callable
 
 from lzy.errors import Span
 
@@ -31,7 +31,7 @@ class TooDeep(Exception):
 
     The interpreter turns this into an :class:`~lzy.errors.LzyLimitError` with
     a source span; it is never shown to an LZY user as-is.
-    """ 
+    """
 
 
 @dataclass
@@ -39,7 +39,7 @@ class Function:
     """A function written in LZY."""
 
     name: str
-    parameters: List[Tuple[str, str]]
+    parameters: list[tuple[str, str]]
     body: object
     closure: object
     span: Span
@@ -56,7 +56,7 @@ class NativeFunction:
     name: str
     #: Minimum and maximum argument counts. ``None`` for max means unlimited.
     min_args: int
-    max_args: Optional[int]
+    max_args: int | None
     call: Callable
     summary: str = ""
 

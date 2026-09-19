@@ -9,7 +9,7 @@ source span, never a bare Python exception.
 from __future__ import annotations
 
 import sys
-from typing import Callable, List, Optional
+from typing import Callable
 
 from lzy.ast.nodes import (
     Ask,
@@ -39,8 +39,8 @@ from lzy.ast.nodes import (
 )
 from lzy.errors import (
     LzyError,
-    LzyIOError,
     LzyIndexError,
+    LzyIOError,
     LzyLimitError,
     LzyNameError,
     LzyTypeError,
@@ -51,18 +51,16 @@ from lzy.interpreter.builtins import BUILTINS, CallContext
 from lzy.interpreter.environment import Environment
 from lzy.interpreter.values import (
     Function,
-    TooDeep,
     NativeFunction,
+    TooDeep,
     describe,
     equal,
-    format_number,
     inspect,
     is_hashable_key,
     is_number,
     is_truth,
     normalise_number,
     show,
-    type_name,
 )
 from lzy.runtime.limits import Limits
 
@@ -126,9 +124,9 @@ class Interpreter:
     def __init__(
         self,
         *,
-        limits: Optional[Limits] = None,
-        output: Optional[Callable[[str], None]] = None,
-        read_line: Optional[Callable[[str], str]] = None,
+        limits: Limits | None = None,
+        output: Callable[[str], None] | None = None,
+        read_line: Callable[[str], str] | None = None,
         file: str = "<input>",
     ) -> None:
         self.limits = limits or Limits()
@@ -240,7 +238,8 @@ class Interpreter:
             container = self.evaluate(target.target)
             if not isinstance(container, dict):
                 raise LzyTypeError(
-                    f"Only a map can have named parts, but this is {describe(container)}.",
+                    "Only a map can have named parts, but this is "
+                    f"{describe(container)}.",
                     target.span,
                     hint=f"'{target.name}' can only be stored on a map.",
                 )
@@ -283,7 +282,7 @@ class Interpreter:
             except _Continue:
                 continue
 
-    def _items_of(self, value, span: Span) -> List:
+    def _items_of(self, value, span: Span) -> list:
         if isinstance(value, list):
             # Copy so that changing the list inside the loop cannot make the
             # loop skip items or run forever.
@@ -488,7 +487,9 @@ class Interpreter:
             return normalise_number(left % right)
         raise LzyError(f"Unknown operator '{operator}'.", span)  # pragma: no cover
 
-    def _addition_error(self, left, right, span: Span, expression: Binary) -> LzyTypeError:
+    def _addition_error(
+        self, left, right, span: Span, expression: Binary
+    ) -> LzyTypeError:
         """The classic 'number + text' mistake gets the clearest message LZY has."""
         if is_number(left) and isinstance(right, str):
             wrong, kind = "right", "text"
@@ -709,7 +710,7 @@ class Interpreter:
             else "Only a function can be called with brackets after it.",
         )
 
-    def _call_native(self, function: NativeFunction, arguments: List, expression: Call):
+    def _call_native(self, function: NativeFunction, arguments: list, expression: Call):
         self._check_arity(
             function.name,
             len(arguments),
@@ -720,7 +721,7 @@ class Interpreter:
         context = CallContext(expression.span, function.name)
         return function.call(context, arguments)
 
-    def call_function(self, function: Function, arguments: List, span: Span):
+    def call_function(self, function: Function, arguments: list, span: Span):
         self._check_arity(
             function.name, len(arguments), function.arity, function.arity, span
         )
@@ -761,7 +762,7 @@ class Interpreter:
             self.call_depth -= 1
 
     def _check_arity(
-        self, name: str, given: int, minimum: int, maximum: Optional[int], span: Span
+        self, name: str, given: int, minimum: int, maximum: int | None, span: Span
     ) -> None:
         if given >= minimum and (maximum is None or given <= maximum):
             return
@@ -819,7 +820,7 @@ def _count(n: int) -> str:
 MAX_SUGGESTION_PART = 40
 
 
-def _source_text(expression) -> Optional[str]:
+def _source_text(expression) -> str | None:
     """Re-render a simple expression so a suggestion can quote the user's code.
 
     Only the shapes that fit comfortably on one line are rendered; anything
@@ -832,7 +833,7 @@ def _source_text(expression) -> Optional[str]:
     return rendered
 
 
-def _render_source_text(expression) -> Optional[str]:
+def _render_source_text(expression) -> str | None:
     if isinstance(expression, Identifier):
         return expression.name
     if isinstance(expression, Literal):
@@ -851,7 +852,7 @@ def _render_source_text(expression) -> Optional[str]:
     return None
 
 
-def _source_name(expression) -> Optional[str]:
+def _source_name(expression) -> str | None:
     """The name a user would recognise for an expression, if it has one."""
     if isinstance(expression, Identifier):
         return expression.name
@@ -861,7 +862,7 @@ def _source_name(expression) -> Optional[str]:
     return None
 
 
-def _span_of(signal) -> Optional[Span]:
+def _span_of(signal) -> Span | None:
     return getattr(signal, "span", None)
 
 

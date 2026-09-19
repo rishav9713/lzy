@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
-from typing import List, Optional
 
 from lzy import __version__
 from lzy.errors import LzyError, LzyIOError
@@ -68,7 +67,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def normalise_argv(argv: List[str]) -> List[str]:
+def normalise_argv(argv: list[str]) -> list[str]:
     """Let ``lzy hello.lzy`` mean ``lzy run hello.lzy``.
 
     Running a file is by far the common case, so a bare path is treated as an
@@ -87,7 +86,7 @@ def normalise_argv(argv: List[str]) -> List[str]:
     return argv
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     argv = normalise_argv(list(sys.argv[1:] if argv is None else argv))
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -192,7 +191,7 @@ def run_stdin(limits: Limits, debug: bool) -> int:
         return EXIT_ERROR
 
 
-def report(error: LzyError, source: Optional[str]) -> None:
+def report(error: LzyError, source: str | None) -> None:
     print(error.render(source), file=sys.stderr)
 
 
