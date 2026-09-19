@@ -1,0 +1,24 @@
+# Two ways to hold several values at once.
+
+# A list keeps things in order, counted from 0.
+colours = ["red", "green", "blue"]
+say colours[0]
+say length(colours)
+
+append(colours, "yellow")
+say colours
+
+# A map looks things up by name.
+person = { "name": "Ada", "age": 36 }
+say person["name"]
+say person.age
+
+person.city = "London"
+say keys(person)
+
+# Walking through both.
+for colour in colours
+    say "Colour: " + colour
+
+for key in person
+    say key + " = " + text(person[key])

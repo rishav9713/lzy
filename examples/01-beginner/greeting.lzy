@@ -1,0 +1,6 @@
+# Asking a question.
+
+name = ask "What is your name? "
+say "Hello " + name + "!"
+
+say "Nice to meet you."

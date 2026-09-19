@@ -1,0 +1,82 @@
+# Spotting repeated failed logins in an authentication log.
+#
+# This is defensive analysis: it reads log lines that a system you run has
+# already produced, and reports what looks worth a human's attention.
+# LZY 0.0.1 has no file access yet, so the sample log is written in here.
+
+log_lines = [
+    "Jan 12 09:14:02 host sshd[2011]: Accepted password for ada from 10.0.0.5 port 51514",
+    "Jan 12 09:15:11 host sshd[2013]: Failed password for root from 203.0.113.9 port 40122",
+    "Jan 12 09:15:13 host sshd[2014]: Failed password for root from 203.0.113.9 port 40124",
+    "Jan 12 09:15:15 host sshd[2015]: Failed password for admin from 203.0.113.9 port 40126",
+    "Jan 12 09:15:18 host sshd[2016]: Failed password for root from 203.0.113.9 port 40128",
+    "Jan 12 09:16:02 host sshd[2020]: Failed password for grace from 198.51.100.4 port 33011",
+    "Jan 12 09:18:44 host sshd[2031]: Accepted password for grace from 198.51.100.4 port 33044",
+    "Jan 12 09:21:07 host sshd[2040]: Failed password for root from 203.0.113.9 port 40130",
+    "Jan 12 09:22:31 host sshd[2044]: Invalid user oracle from 192.0.2.77 port 51221"
+]
+
+# How many failures from one address before we call it out.
+alert_threshold = 3
+
+function field_after(line, marker)
+    # Return the word that follows a marker word, or nothing.
+    words = split(line, " ")
+    position = find(words, marker)
+    if position == nothing
+        return nothing
+    if position + 1 >= length(words)
+        return nothing
+    return words[position + 1]
+
+failures = {}
+accepted = {}
+invalid_users = []
+
+for line in log_lines
+    source = field_after(line, "from")
+    if source == nothing
+        continue
+
+    if contains(line, "Failed password")
+        if contains(failures, source)
+            failures[source] = failures[source] + 1
+        else
+            failures[source] = 1
+    else if contains(line, "Accepted password")
+        if contains(accepted, source)
+            accepted[source] = accepted[source] + 1
+        else
+            accepted[source] = 1
+    else if contains(line, "Invalid user")
+        append(invalid_users, source)
+
+say "Failed logins by source address"
+say "-------------------------------"
+for address in sort(keys(failures))
+    say address + ": " + text(failures[address])
+
+say ""
+say "Findings"
+say "--------"
+
+findings = 0
+
+for address in sort(keys(failures))
+    if failures[address] >= alert_threshold
+        findings = findings + 1
+        note = text(failures[address]) + " failed logins from " + address
+        if contains(accepted, address)
+            note = note + " AND a successful login - check this account"
+        say "[high]   " + note
+
+for address in sort(invalid_users)
+    findings = findings + 1
+    say "[medium] Login attempt for an account that does not exist, from " + address
+
+if findings == 0
+    say "Nothing above the threshold."
+
+say ""
+say "Lines read:", length(log_lines)
+say "Findings:", findings

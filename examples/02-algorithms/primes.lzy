@@ -1,0 +1,29 @@
+# Finding prime numbers with the Sieve of Eratosthenes.
+
+function primes_up_to(limit)
+    # Start by assuming every number is prime.
+    is_prime = []
+    for n in range(limit + 1)
+        append(is_prime, true)
+
+    is_prime[0] = false
+    if limit >= 1
+        is_prime[1] = false
+
+    candidate = 2
+    while candidate * candidate <= limit
+        if is_prime[candidate]
+            multiple = candidate * candidate
+            while multiple <= limit
+                is_prime[multiple] = false
+                multiple = multiple + candidate
+        candidate = candidate + 1
+
+    found = []
+    for n in range(limit + 1)
+        if is_prime[n]
+            append(found, n)
+    return found
+
+say primes_up_to(50)
+say "How many primes below 1000:", length(primes_up_to(1000))

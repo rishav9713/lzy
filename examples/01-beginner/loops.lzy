@@ -1,0 +1,21 @@
+# Doing something more than once.
+
+numbers = [10, 20, 30, 40]
+
+total = 0
+for number in numbers
+    total = total + number
+
+say "Total:", total
+
+# range() counts for you.
+for count in range(1, 4)
+    say "Step " + text(count)
+
+# while repeats until something changes.
+countdown = 3
+while countdown > 0
+    say countdown
+    countdown = countdown - 1
+
+say "Lift off"

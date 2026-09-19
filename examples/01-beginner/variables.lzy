@@ -1,0 +1,14 @@
+# Variables hold values. LZY ignores capital letters in names,
+# so name, Name and NAME are all the same variable.
+
+name = "Ada"
+age = 36
+likes_maths = true
+
+say "Name: " + name
+say "Age next year:", age + 1
+say "Likes maths:", likes_maths
+
+# Both of these change the same variable.
+NAME = "Grace"
+say name

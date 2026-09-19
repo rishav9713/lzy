@@ -1,0 +1,27 @@
+# Functions give a name to a piece of work.
+
+function add(a, b)
+    return a + b
+
+function greet(who)
+    return "Hello " + who + "!"
+
+say add(2, 3)
+say greet("Ada")
+
+# A function can call itself. This one adds up 1 + 2 + ... + n.
+function total_up_to(n)
+    if n <= 0
+        return 0
+    return n + total_up_to(n - 1)
+
+say total_up_to(10)
+
+# Functions are values, so one function can take another.
+function twice(f, value)
+    return f(f(value))
+
+function double(n)
+    return n * 2
+
+say twice(double, 5)

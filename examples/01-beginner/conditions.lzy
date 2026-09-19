@@ -1,0 +1,20 @@
+# Making decisions.
+
+age = 18
+
+if age >= 18
+    say "Adult"
+else if age >= 13
+    say "Teenager"
+else
+    say "Child"
+
+# LZY asks for a clear yes or no in a condition, so compare values
+# rather than relying on a number being "truthy".
+temperature = 0
+
+if temperature == 0
+    say "Freezing"
+
+if temperature < 10 and temperature > -10
+    say "Cold, but not extreme"

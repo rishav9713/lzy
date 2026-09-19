@@ -1,0 +1,29 @@
+# Sorting a list by hand, so you can see how it works.
+# (LZY also has a built-in sort(), used at the end to check the answer.)
+
+function bubble_sort(items)
+    result = copy(items)
+    count = length(result)
+
+    round_number = 0
+    while round_number < count
+        swapped = false
+        position = 0
+        while position < count - round_number - 1
+            if result[position] > result[position + 1]
+                held = result[position]
+                result[position] = result[position + 1]
+                result[position + 1] = held
+                swapped = true
+            position = position + 1
+        if not swapped
+            break
+        round_number = round_number + 1
+
+    return result
+
+numbers = [5, 2, 9, 1, 5, 6]
+say "Before:", numbers
+say "After: ", bubble_sort(numbers)
+say "Built-in agrees:", bubble_sort(numbers) == sort(numbers)
+say "The original list is untouched:", numbers

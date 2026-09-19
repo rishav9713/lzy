@@ -1,0 +1,44 @@
+# A stack takes the newest item first. A queue takes the oldest.
+
+function push(stack, item)
+    append(stack, item)
+
+function pop(stack)
+    return remove_at(stack, -1)
+
+function enqueue(queue, item)
+    append(queue, item)
+
+function dequeue(queue)
+    return remove_at(queue, 0)
+
+stack = []
+push(stack, "a")
+push(stack, "b")
+push(stack, "c")
+say "Stack gives back:", pop(stack), pop(stack)
+
+queue = []
+enqueue(queue, "a")
+enqueue(queue, "b")
+enqueue(queue, "c")
+say "Queue gives back:", dequeue(queue), dequeue(queue)
+
+# Balanced brackets: a classic use for a stack.
+function brackets_match(line)
+    waiting = []
+    pairs = { ")": "(", "]": "[", "}": "{" }
+
+    for character in line
+        if contains("([{", character)
+            push(waiting, character)
+        else if contains(")]}", character)
+            if length(waiting) == 0
+                return false
+            if pop(waiting) != pairs[character]
+                return false
+
+    return length(waiting) == 0
+
+say brackets_match("(a[b]{c})")
+say brackets_match("(a[b)]")

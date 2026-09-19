@@ -1,0 +1,13 @@
+red
+3
+["red", "green", "blue", "yellow"]
+Ada
+36
+["name", "age", "city"]
+Colour: red
+Colour: green
+Colour: blue
+Colour: yellow
+name = Ada
+age = 36
+city = London

@@ -1,0 +1,23 @@
+# Two ways to find Fibonacci numbers.
+
+# The direct way: the definition, written out.
+function fib(n)
+    if n <= 1
+        return n
+    return fib(n - 1) + fib(n - 2)
+
+say "Straight from the definition:"
+for n in range(10)
+    say fib(n)
+
+# The fast way: remember the answers you already worked out.
+function fib_fast(n)
+    known = [0, 1]
+    index = 2
+    while index <= n
+        append(known, known[index - 1] + known[index - 2])
+        index = index + 1
+    return known[n]
+
+say "The fast way, up to 40:"
+say fib_fast(40)

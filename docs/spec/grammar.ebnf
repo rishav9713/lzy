@@ -1,0 +1,215 @@
+(*
+   The LZY grammar, version 0.0.1.
+
+   Notation
+   --------
+     =        definition            "x"      a literal
+     ,        sequence              |        choice
+     [ x ]    optional              { x }    zero or more
+     ( x )    grouping              (* *)    a comment
+
+   This grammar is written to read function-for-function like
+   lzy/parser/parser.py. When one changes, the other must change with it.
+
+   NEWLINE, INDENT and DEDENT are produced by the lexer, not written by the
+   programmer. INDENT and DEDENT are emitted only outside brackets; inside
+   brackets, line breaks carry no meaning.
+*)
+
+(* ------------------------------------------------------------------ *)
+(* Program                                                            *)
+(* ------------------------------------------------------------------ *)
+
+program         = { NEWLINE } , { statement , { NEWLINE } } , EOF ;
+
+statement       = if statement
+                | while statement
+                | for statement
+                | function definition
+                | say statement
+                | return statement
+                | break statement
+                | continue statement
+                | assignment or expression ;
+
+block           = NEWLINE , INDENT , statement , { statement } , DEDENT ;
+
+(*
+   A block must hold at least one statement. There is no ":" before it and no
+   keyword closing it: the indentation is the block.
+*)
+
+(* ------------------------------------------------------------------ *)
+(* Compound statements                                                *)
+(* ------------------------------------------------------------------ *)
+
+if statement    = "if" , condition , block ,
+                  [ "else" , ( if statement | block ) ] ;
+
+(* "else if" is written as two words and parses as a nested if statement. *)
+
+while statement = "while" , condition , block ;
+
+for statement   = "for" , identifier , "in" , expression , block ;
+
+function definition
+                = "function" , identifier , "(" , [ parameters ] , ")" , block ;
+
+parameters      = identifier , { "," , identifier } , [ "," ] ;
+
+condition       = expression ;
+
+(*
+   A condition must produce a truth value at run time; this is a semantic
+   rule, not a grammatical one. A "=" found where a condition ends is
+   reported as a mistaken "==" rather than parsed.
+*)
+
+(* ------------------------------------------------------------------ *)
+(* Simple statements                                                  *)
+(* ------------------------------------------------------------------ *)
+
+say statement   = "say" , [ expression , { "," , expression } ] , end of line ;
+
+return statement
+                = "return" , [ expression ] , end of line ;
+
+break statement = "break" , end of line ;
+
+continue statement
+                = "continue" , end of line ;
+
+assignment or expression
+                = expression , [ "=" , expression ] , end of line ;
+
+(*
+   When "=" is present, the expression on the left must be an assignment
+   target: an identifier, an index, or a member. This is checked by the
+   parser, which gives a targeted error for the common mistakes (assigning to
+   a call, or to a literal).
+*)
+
+assignment target
+                = identifier
+                | postfix expression , "[" , expression , "]"
+                | postfix expression , "." , identifier ;
+
+end of line     = NEWLINE | DEDENT | EOF ;
+
+(* ------------------------------------------------------------------ *)
+(* Expressions, loosest binding first                                 *)
+(* ------------------------------------------------------------------ *)
+
+expression      = or expression ;
+
+or expression   = and expression , { "or" , and expression } ;
+
+and expression  = not expression , { "and" , not expression } ;
+
+not expression  = "not" , not expression
+                | comparison ;
+
+comparison      = additive , { comparison operator , additive } ;
+
+comparison operator
+                = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+
+additive        = multiplicative , { ( "+" | "-" ) , multiplicative } ;
+
+multiplicative  = unary , { ( "*" | "/" | "%" ) , unary } ;
+
+unary           = ( "-" | "not" ) , unary
+                | postfix expression ;
+
+postfix expression
+                = primary , { call suffix | index suffix | member suffix } ;
+
+call suffix     = "(" , [ arguments ] , ")" ;
+index suffix    = "[" , expression , "]" ;
+member suffix   = "." , identifier ;
+
+arguments       = expression , { "," , expression } , [ "," ] ;
+
+primary         = number
+                | text
+                | "true" | "false" | "nothing"
+                | identifier
+                | ask expression
+                | "(" , expression , ")"
+                | list literal
+                | map literal ;
+
+ask expression  = "ask" , [ expression ] ;
+
+list literal    = "[" , [ expression , { "," , expression } , [ "," ] ] , "]" ;
+
+map literal     = "{" , [ map entry , { "," , map entry } , [ "," ] ] , "}" ;
+
+map entry       = map key , ":" , expression ;
+
+map key         = identifier      (* shorthand: the folded name, as text *)
+                | expression ;
+
+(* ------------------------------------------------------------------ *)
+(* Tokens                                                             *)
+(* ------------------------------------------------------------------ *)
+
+identifier      = name start , { name continue } ;
+
+name start      = unicode letter | "_" ;
+name continue   = unicode letter | unicode digit | "_" ;
+
+(*
+   An identifier is folded (NFKC, then full Unicode case folding) before it is
+   compared with anything. A folded identifier that matches a keyword is that
+   keyword; one that matches a reserved word is an error.
+*)
+
+keyword         = "and" | "ask" | "break" | "continue" | "else" | "false"
+                | "for" | "function" | "if" | "in" | "not" | "nothing"
+                | "or" | "return" | "say" | "true" | "while" ;
+
+number          = digits , [ "." , digits ] , [ exponent ] ;
+
+digits          = digit , { digit | "_" , digit } ;
+
+exponent        = ( "e" | "E" ) , [ "+" | "-" ] , digits ;
+
+(*
+   A "." is only part of a number when a digit follows it, so "1.name" is a
+   member access on the number 1, not a malformed number. A number may not be
+   followed directly by a letter.
+*)
+
+text            = '"' , { text character | escape } , '"'
+                | "'" , { text character | escape } , "'" ;
+
+text character  = ? any character except the opening quote, a backslash,
+                    or a line break ? ;
+
+escape          = "\" , ( "n" | "t" | "r" | "0" | "\" | '"' | "'" )
+                | "\u{" , hex digits , "}" ;
+
+comment         = "#" , { ? any character except a line break ? } ;
+
+(* ------------------------------------------------------------------ *)
+(* Layout tokens                                                      *)
+(* ------------------------------------------------------------------ *)
+
+(*
+   The lexer keeps a stack of indentation widths, starting at 0.
+
+   At the start of each line that holds code:
+     - leading spaces are counted; a tab is an error
+     - a greater width than the top of the stack pushes it and emits INDENT
+     - a smaller width pops the stack, emitting DEDENT for each level, and is
+       an error if it does not land exactly on a remaining level
+     - an equal width emits nothing
+
+   A blank line, or a line holding only a comment, is skipped entirely and
+   never affects the stack.
+
+   NEWLINE is emitted at the end of every line that produced at least one
+   token, and at end of file if the last line did. DEDENT is emitted for every
+   remaining level at end of file, before EOF.
+*)

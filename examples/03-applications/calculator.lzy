@@ -1,0 +1,35 @@
+# A calculator that reads what to do.
+
+say "A small calculator. Type 'stop' to finish."
+
+running = true
+while running
+    line = ask "> "
+
+    if lower(trim(line)) == "stop"
+        running = false
+    else
+        parts = split(trim(line), " ")
+
+        if length(parts) != 3
+            say "Please write it like:  12 + 5"
+        else
+            left = number(parts[0])
+            operator = parts[1]
+            right = number(parts[2])
+
+            if operator == "+"
+                say left + right
+            else if operator == "-"
+                say left - right
+            else if operator == "*"
+                say left * right
+            else if operator == "/"
+                if right == 0
+                    say "I cannot divide by zero."
+                else
+                    say left / right
+            else
+                say "I do not know the operator " + operator
+
+say "Goodbye."

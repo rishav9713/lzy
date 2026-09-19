@@ -1,0 +1,52 @@
+# Pulling indicators of compromise out of a report, so they can be checked.
+#
+# Defensive use: an analyst pastes in a advisory or an alert, and gets a
+# tidy list of the addresses mentioned in it to look up in their own logs.
+
+report = "Beacon traffic seen to 203.0.113.9 and 198.51.100.44 every 60 seconds. A second sample reached out to 192.0.2.5, then to 203.0.113.9 again. One host resolved updates.example-cdn.test before connecting. Ignore the version string 1.2.3.4.5 in the header."
+
+function looks_like_ipv4(word)
+    parts = split(word, ".")
+    if length(parts) != 4
+        return false
+
+    digits = "0123456789"
+    for part in parts
+        if length(part) == 0 or length(part) > 3
+            return false
+        for character in part
+            if not contains(digits, character)
+                return false
+        if number(part) > 255
+            return false
+
+    return true
+
+function strip_punctuation(word)
+    trimmed = word
+    while length(trimmed) > 0 and contains(".,;:()[]\"'", trimmed[length(trimmed) - 1])
+        trimmed = remove_last(trimmed)
+    return trimmed
+
+function remove_last(word)
+    result = ""
+    for position in range(length(word) - 1)
+        result = result + word[position]
+    return result
+
+addresses = []
+for raw_word in split(report, " ")
+    word = strip_punctuation(raw_word)
+    if looks_like_ipv4(word)
+        if not contains(addresses, word)
+            append(addresses, word)
+
+say "IPv4 addresses mentioned"
+say "------------------------"
+for address in sort(addresses)
+    say address
+
+say ""
+say "Found", length(addresses), "unique addresses."
+say ""
+say "Next step: look these up in your own logs before acting on them."

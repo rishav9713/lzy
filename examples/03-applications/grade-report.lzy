@@ -1,0 +1,40 @@
+# A small report built from a list of maps.
+
+students = [
+    { "name": "Ada",   "scores": [95, 88, 92] },
+    { "name": "Grace", "scores": [78, 82, 85] },
+    { "name": "Alan",  "scores": [65, 70, 58] }
+]
+
+function average(numbers)
+    if length(numbers) == 0
+        return 0
+    return round(sum(numbers) / length(numbers), 1)
+
+function grade(score)
+    if score >= 90
+        return "A"
+    else if score >= 80
+        return "B"
+    else if score >= 70
+        return "C"
+    else
+        return "F"
+
+say "Name       Average  Grade"
+say "---------  -------  -----"
+
+class_total = 0
+for student in students
+    mean = average(student.scores)
+    class_total = class_total + mean
+
+    padding = 11 - length(student.name)
+    spaces = ""
+    for i in range(padding)
+        spaces = spaces + " "
+
+    say student.name + spaces + text(mean) + "     " + grade(mean)
+
+say ""
+say "Class average:", round(class_total / length(students), 1)

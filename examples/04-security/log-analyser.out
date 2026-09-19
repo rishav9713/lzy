@@ -1,0 +1,12 @@
+Failed logins by source address
+-------------------------------
+198.51.100.4: 1
+203.0.113.9: 5
+
+Findings
+--------
+[high]   5 failed logins from 203.0.113.9
+[medium] Login attempt for an account that does not exist, from 192.0.2.77
+
+Lines read: 9
+Findings: 2

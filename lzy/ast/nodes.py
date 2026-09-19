@@ -1,0 +1,193 @@
+"""The LZY abstract syntax tree.
+
+Nodes are plain dataclasses. Every node carries the :class:`~lzy.errors.Span`
+it came from so that runtime errors can point back at the exact source text.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import List, Optional, Tuple
+
+from lzy.errors import Span
+
+
+@dataclass
+class Node:
+    span: Span
+
+
+# ----------------------------------------------------------------------
+# Expressions
+# ----------------------------------------------------------------------
+
+
+@dataclass
+class Expression(Node):
+    pass
+
+
+@dataclass
+class Literal(Expression):
+    """A number, text, true, false or nothing written directly in the source."""
+
+    value: object
+
+
+@dataclass
+class ListLiteral(Expression):
+    items: List[Expression]
+
+
+@dataclass
+class MapLiteral(Expression):
+    #: Key/value pairs in source order. Keys are expressions so that
+    #: ``{ name: value }`` and ``{ "name": value }`` share one code path.
+    entries: List[Tuple[Expression, Expression]]
+
+
+@dataclass
+class Identifier(Expression):
+    #: The name exactly as the user typed it, for diagnostics.
+    name: str
+    #: The case-folded name, used for every lookup.
+    folded: str
+
+
+@dataclass
+class Unary(Expression):
+    operator: str
+    operand: Expression
+
+
+@dataclass
+class Binary(Expression):
+    operator: str
+    left: Expression
+    right: Expression
+    #: Span of the operator itself, so errors underline the operator.
+    operator_span: Optional[Span] = None
+
+
+@dataclass
+class Logical(Expression):
+    """``and`` / ``or``. Separate from Binary because they short-circuit."""
+
+    operator: str
+    left: Expression
+    right: Expression
+
+
+@dataclass
+class Call(Expression):
+    callee: Expression
+    arguments: List[Expression]
+
+
+@dataclass
+class Index(Expression):
+    """``target[key]`` for lists and maps."""
+
+    target: Expression
+    key: Expression
+
+
+@dataclass
+class Member(Expression):
+    """``target.name`` for maps."""
+
+    target: Expression
+    name: str
+    folded: str
+
+
+@dataclass
+class Ask(Expression):
+    """``ask "question"`` reads a line from the user."""
+
+    prompt: Optional[Expression] = None
+
+
+# ----------------------------------------------------------------------
+# Statements
+# ----------------------------------------------------------------------
+
+
+@dataclass
+class Statement(Node):
+    pass
+
+
+@dataclass
+class Block(Node):
+    statements: List[Statement] = field(default_factory=list)
+
+
+@dataclass
+class Program(Node):
+    body: Block = None
+
+
+@dataclass
+class Say(Statement):
+    values: List[Expression]
+
+
+@dataclass
+class ExpressionStatement(Statement):
+    expression: Expression
+
+
+@dataclass
+class Assign(Statement):
+    """``target = value`` where target is a name, an index or a member."""
+
+    target: Expression
+    value: Expression
+
+
+@dataclass
+class If(Statement):
+    condition: Expression
+    then_branch: Block
+    #: Either a Block (``else``) or a nested If (``else if``), or None.
+    else_branch: Optional[Node] = None
+
+
+@dataclass
+class While(Statement):
+    condition: Expression
+    body: Block
+
+
+@dataclass
+class For(Statement):
+    #: Loop variable, as written and folded.
+    name: str
+    folded: str
+    iterable: Expression
+    body: Block
+
+
+@dataclass
+class FunctionDef(Statement):
+    name: str
+    folded: str
+    #: Parameters as (original spelling, folded name).
+    parameters: List[Tuple[str, str]]
+    body: Block
+
+
+@dataclass
+class Return(Statement):
+    value: Optional[Expression] = None
+
+
+@dataclass
+class Break(Statement):
+    pass
+
+
+@dataclass
+class Continue(Statement):
+    pass

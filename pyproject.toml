@@ -1,0 +1,89 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lzy-lang"
+version = "0.0.1"
+description = "LZY - a programming language for complex logic and simple code."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [{ name = "The LZY Authors" }]
+keywords = ["programming-language", "interpreter", "education", "lzy"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Interpreters",
+    "Topic :: Education",
+]
+# LZY's interpreter depends only on the Python standard library. Keeping it
+# that way is a deliberate supply-chain decision for the 0.x series.
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "coverage>=7.0",
+    "ruff>=0.5",
+    "build>=1.0",
+]
+
+[project.scripts]
+lzy = "lzy.cli.main:main"
+
+[project.urls]
+Homepage = "https://github.com/lzy-lang/lzy"
+Documentation = "https://github.com/lzy-lang/lzy/tree/main/docs"
+Source = "https://github.com/lzy-lang/lzy"
+Issues = "https://github.com/lzy-lang/lzy/issues"
+Changelog = "https://github.com/lzy-lang/lzy/blob/main/CHANGELOG.md"
+
+[tool.setuptools.packages.find]
+include = ["lzy*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q --strict-markers"
+markers = [
+    "slow: a test that takes noticeably longer than the rest",
+]
+
+[tool.coverage.run]
+source = ["lzy"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+]
+
+[tool.ruff]
+line-length = 90
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM"]
+ignore = [
+    # LZY's own errors deliberately use `raise ... from None` to keep Python
+    # internals out of the user's way, and B904 disagrees with that choice.
+    "B904",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests use long single-line LZY snippets on purpose; wrapping them would make
+# the expected behaviour harder to read.
+"tests/*" = ["E501"]

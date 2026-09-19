@@ -1,0 +1,4 @@
+# The first LZY program.
+# Run it with:  lzy hello.lzy
+
+say "Hello World"

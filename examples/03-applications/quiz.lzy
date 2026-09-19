@@ -1,0 +1,28 @@
+# A quiz that keeps score.
+
+questions = [
+    { "ask": "What does LZY stand for on its own? ", "answer": "nothing" },
+    { "ask": "What is 6 times 7? ",                  "answer": "42" },
+    { "ask": "Which word prints something in LZY? ", "answer": "say" }
+]
+
+score = 0
+
+for question in questions
+    given = lower(trim(ask question["ask"]))
+
+    if given == question.answer
+        say "Correct."
+        score = score + 1
+    else
+        say "Not quite. The answer is " + question.answer + "."
+
+say ""
+say "You scored", score, "out of", length(questions)
+
+if score == length(questions)
+    say "Full marks."
+else if score > 0
+    say "Worth another go."
+else
+    say "Have a read and try again."

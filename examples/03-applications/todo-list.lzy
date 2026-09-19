@@ -1,0 +1,41 @@
+# Keeping a list of jobs, and changing it.
+
+jobs = []
+
+function add_job(list_of_jobs, title)
+    append(list_of_jobs, { "title": title, "done": false })
+
+function finish_job(list_of_jobs, title)
+    for job in list_of_jobs
+        if job.title == title
+            job.done = true
+            return true
+    return false
+
+function show_jobs(list_of_jobs)
+    if length(list_of_jobs) == 0
+        say "Nothing to do."
+        return
+
+    for job in list_of_jobs
+        mark = "[ ]"
+        if job.done
+            mark = "[x]"
+        say mark + " " + job.title
+
+add_job(jobs, "Write the lexer")
+add_job(jobs, "Write the parser")
+add_job(jobs, "Write the tests")
+
+finish_job(jobs, "Write the lexer")
+finish_job(jobs, "Write the parser")
+
+show_jobs(jobs)
+
+remaining = 0
+for job in jobs
+    if not job.done
+        remaining = remaining + 1
+
+say ""
+say "Still to do:", remaining

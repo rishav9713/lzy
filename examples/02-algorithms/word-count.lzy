@@ -1,0 +1,23 @@
+# Counting words with a map.
+
+text_to_read = "the quick brown fox jumps over the lazy dog the fox"
+
+counts = {}
+for word in split(text_to_read, " ")
+    if contains(counts, word)
+        counts[word] = counts[word] + 1
+    else
+        counts[word] = 1
+
+for word in sort(keys(counts))
+    say word + ": " + text(counts[word])
+
+# Which word appeared most often?
+best_word = ""
+best_count = 0
+for word in keys(counts)
+    if counts[word] > best_count
+        best_count = counts[word]
+        best_word = word
+
+say "Most common: " + best_word + " (" + text(best_count) + " times)"

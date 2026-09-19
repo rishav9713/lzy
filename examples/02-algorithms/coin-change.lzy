@@ -1,0 +1,26 @@
+# Dynamic programming: the fewest coins that make an amount.
+
+function fewest_coins(coins, amount)
+    # best[n] is the fewest coins that make n. Start with "impossible".
+    impossible = amount + 1
+    best = []
+    for n in range(amount + 1)
+        append(best, impossible)
+    best[0] = 0
+
+    for target in range(1, amount + 1)
+        for coin in coins
+            if coin <= target
+                with_this_coin = best[target - coin] + 1
+                if with_this_coin < best[target]
+                    best[target] = with_this_coin
+
+    if best[amount] == impossible
+        return nothing
+    return best[amount]
+
+coins = [1, 5, 10, 25]
+
+say fewest_coins(coins, 63)
+say fewest_coins(coins, 6)
+say fewest_coins([5, 10], 3)
