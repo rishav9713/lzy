@@ -6,7 +6,7 @@ it came from so that runtime errors can point back at the exact source text.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 
 from lzy.errors import Span
 
@@ -190,3 +190,49 @@ class Break(Statement):
 @dataclass
 class Continue(Statement):
     pass
+
+
+# ----------------------------------------------------------------------
+# Walking the tree
+# ----------------------------------------------------------------------
+
+
+def children(node: Node):
+    """Yield the child nodes of ``node``, in source order.
+
+    Discovered from the dataclass fields rather than listed per node type, so
+    a new node type is walked correctly the day it is added instead of the day
+    somebody remembers to update this function.
+    """
+    for slot in fields(node):
+        value = getattr(node, slot.name, None)
+        if isinstance(value, Node):
+            yield value
+        elif isinstance(value, (list, tuple)):
+            for item in value:
+                if isinstance(item, Node):
+                    yield item
+                elif isinstance(item, (list, tuple)):
+                    # Map entries are (key, value) pairs.
+                    for inner in item:
+                        if isinstance(inner, Node):
+                            yield inner
+
+
+def deepest_node(root: Node):
+    """Return ``(depth, node)`` for the deepest point in the tree.
+
+    Depth is 1 for ``root`` itself. The walk is iterative on purpose: this is
+    the check that stops a pathological tree from overflowing the stack, so it
+    must not be able to overflow the stack itself.
+    """
+    deepest = 0
+    found = root
+    stack = [(root, 1)]
+    while stack:
+        node, depth = stack.pop()
+        if depth > deepest:
+            deepest, found = depth, node
+        for child in children(node):
+            stack.append((child, depth + 1))
+    return deepest, found

@@ -39,6 +39,7 @@ from lzy.ast.nodes import (
     Statement,
     Unary,
     While,
+    deepest_node,
 )
 from lzy.errors import LzySyntaxError
 from lzy.lexer.tokens import Token, TokenType
@@ -182,7 +183,33 @@ class Parser:
             statements.append(self.statement())
             self._skip_newlines()
         body = Block(start, statements)
-        return Program(start, body)
+        program = Program(start, body)
+        self._check_tree_depth(program)
+        return program
+
+    def _check_tree_depth(self, program: Program) -> None:
+        """Refuse a tree too deep to evaluate without exhausting the stack.
+
+        ``max_parse_depth`` bounds the parser's own recursion, which is not the
+        same thing: ``1 + 1 + 1 + ...`` is parsed by a loop, so parser recursion
+        stays flat while the tree grows one level per operator. Evaluating that
+        tree later recurses once per level, so the tree itself has to be
+        bounded. Checked here rather than at run time so that ``lzy check``
+        catches it too.
+        """
+        depth, deepest = deepest_node(program)
+        if depth <= self.limits.max_ast_depth:
+            return
+        raise LzySyntaxError(
+            "This code nests too deeply for LZY to work through.",
+            deepest.span,
+            hint=(
+                f"LZY handles up to {self.limits.max_ast_depth:,} levels of nesting, "
+                f"and this reaches {depth:,}. A very long chain of operators counts "
+                "as nesting, so splitting it across several lines with names for the "
+                "parts will fix it."
+            ),
+        )
 
     # ------------------------------------------------------------------
     # Statements
