@@ -44,7 +44,7 @@ they disagree, the repository is right and this file is stale.
 | Package manager | **NOT IMPLEMENTED** | Deliberately not started |
 | Bytecode VM | **NOT IMPLEMENTED** | Planned for 0.5.0 |
 | Playground | **NOT IMPLEMENTED** | Needs real isolation before it exists |
-| Released artifacts | **READY** | v0.0.1 and v0.0.2 on GitHub Releases |
+| Released artifacts | **READY** | Wheel and sdist, built, checksummed and published on GitHub Releases. CHANGELOG.md lists which versions exist. |
 
 ---
 
