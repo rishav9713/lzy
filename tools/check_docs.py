@@ -16,9 +16,7 @@ should not fail because somebody else's site is down.
 from __future__ import annotations
 
 import re
-import sys
 from pathlib import Path
-from typing import List, Tuple
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -28,10 +26,12 @@ LINK = re.compile(r"\[(?P<text>[^\]]*)\]\((?P<target>[^)\s]+)\)")
 #: A Markdown ATX heading.
 HEADING = re.compile(r"^(?P<hashes>#{1,6})\s+(?P<title>.+?)\s*$", re.MULTILINE)
 
-SKIP_DIRECTORIES = {".git", "__pycache__", ".pytest_cache", "node_modules", "dist", "build"}
+SKIP_DIRECTORIES = {
+    ".git", "__pycache__", ".pytest_cache", "node_modules", "dist", "build",
+}
 
 
-def markdown_files() -> List[Path]:
+def markdown_files() -> list[Path]:
     found = []
     for path in ROOT.rglob("*.md"):
         if any(part in SKIP_DIRECTORIES for part in path.parts):
@@ -57,8 +57,8 @@ def anchors_in(path: Path) -> set:
     return {slug(match.group("title")) for match in HEADING.finditer(text)}
 
 
-def check_file(path: Path) -> List[Tuple[int, str]]:
-    problems: List[Tuple[int, str]] = []
+def check_file(path: Path) -> list[tuple[int, str]]:
+    problems: list[tuple[int, str]] = []
     text = path.read_text(encoding="utf-8")
 
     for match in LINK.finditer(text):
@@ -81,9 +81,8 @@ def check_file(path: Path) -> List[Tuple[int, str]]:
             problems.append((line, f"{file_part} does not exist"))
             continue
 
-        if anchor and resolved.suffix == ".md":
-            if anchor not in anchors_in(resolved):
-                problems.append((line, f"{file_part} has no heading #{anchor}"))
+        if anchor and resolved.suffix == ".md" and anchor not in anchors_in(resolved):
+            problems.append((line, f"{file_part} has no heading #{anchor}"))
 
     return problems
 

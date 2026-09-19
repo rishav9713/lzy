@@ -12,7 +12,6 @@ one clear message is better than a cascade of guesses.
 from __future__ import annotations
 
 from contextlib import contextmanager
-from typing import List, Optional, Tuple
 
 from lzy.ast.nodes import (
     Ask,
@@ -41,7 +40,7 @@ from lzy.ast.nodes import (
     Unary,
     While,
 )
-from lzy.errors import LzySyntaxError, Span
+from lzy.errors import LzySyntaxError
 from lzy.lexer.tokens import Token, TokenType
 from lzy.runtime.limits import Limits
 
@@ -96,7 +95,7 @@ _STATEMENT_TYPOS = {
 
 
 class Parser:
-    def __init__(self, tokens: List[Token], limits: Optional[Limits] = None) -> None:
+    def __init__(self, tokens: list[Token], limits: Limits | None = None) -> None:
         self.tokens = tokens
         self.limits = limits or Limits()
         self.current = 0
@@ -124,7 +123,7 @@ class Parser:
             self.current += 1
         return self.previous()
 
-    def match(self, *types: TokenType) -> Optional[Token]:
+    def match(self, *types: TokenType) -> Token | None:
         if self.check(*types):
             return self.advance()
         return None
@@ -166,7 +165,7 @@ class Parser:
 
     def parse(self) -> Program:
         start = self.peek().span
-        statements: List[Statement] = []
+        statements: list[Statement] = []
         self._skip_newlines()
         while not self.at_end():
             if self.check(T.INDENT):
@@ -275,7 +274,7 @@ class Parser:
             )
         self.advance()
 
-        statements: List[Statement] = []
+        statements: list[Statement] = []
         self._skip_newlines()
         while not self.check(T.DEDENT, T.EOF):
             statements.append(self.statement())
@@ -310,10 +309,7 @@ class Parser:
         self._skip_newlines()
         if self.check(T.ELSE):
             self.advance()
-            if self.check(T.IF):
-                else_branch = self.if_statement()
-            else:
-                else_branch = self.block("else")
+            else_branch = self.if_statement() if self.check(T.IF) else self.block("else")
         return If(token.span, condition, then_branch, else_branch)
 
     def while_statement(self) -> While:
@@ -352,7 +348,7 @@ class Parser:
             f"function {name_token.text}() if it takes none.",
         )
 
-        parameters: List[Tuple[str, str]] = []
+        parameters: list[tuple[str, str]] = []
         seen = set()
         if not self.check(T.RPAREN):
             while True:
@@ -380,11 +376,13 @@ class Parser:
             hint="Check for a missing comma or bracket.",
         )
         body = self.block("function")
-        return FunctionDef(token.span, name_token.text, name_token.value, parameters, body)
+        return FunctionDef(
+            token.span, name_token.text, name_token.value, parameters, body
+        )
 
     def say_statement(self) -> Say:
         token = self.advance()
-        values: List[Expression] = []
+        values: list[Expression] = []
         if self.check(*_EXPRESSION_START):
             values.append(self.expression())
             while self.match(T.COMMA):
@@ -532,7 +530,7 @@ class Parser:
 
     def _finish_call(self, callee: Expression) -> Expression:
         self.advance()
-        arguments: List[Expression] = []
+        arguments: list[Expression] = []
         if not self.check(T.RPAREN):
             while True:
                 arguments.append(self.expression())
@@ -617,7 +615,7 @@ class Parser:
 
     def list_literal(self) -> ListLiteral:
         token = self.advance()
-        items: List[Expression] = []
+        items: list[Expression] = []
         if not self.check(T.RBRACKET):
             while True:
                 items.append(self.expression())
@@ -634,7 +632,7 @@ class Parser:
 
     def map_literal(self) -> MapLiteral:
         token = self.advance()
-        entries: List[Tuple[Expression, Expression]] = []
+        entries: list[tuple[Expression, Expression]] = []
         if not self.check(T.RBRACE):
             while True:
                 entries.append(self._map_entry())
@@ -649,7 +647,7 @@ class Parser:
         )
         return MapLiteral(token.span, entries)
 
-    def _map_entry(self) -> Tuple[Expression, Expression]:
+    def _map_entry(self) -> tuple[Expression, Expression]:
         key_token = self.peek()
         if key_token.type is T.IDENT:
             # A bare name is shorthand for its own text: { name: x } is
@@ -667,6 +665,6 @@ class Parser:
         return key, self.expression()
 
 
-def parse(tokens: List[Token], limits: Optional[Limits] = None) -> Program:
+def parse(tokens: list[Token], limits: Limits | None = None) -> Program:
     """Parse ``tokens`` into a :class:`~lzy.ast.nodes.Program`."""
     return Parser(tokens, limits).parse()
