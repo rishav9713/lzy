@@ -33,6 +33,7 @@ they disagree, the repository is right and this file is stale.
 | CI | **READY** | 19/19 green on 3 platforms × 5 Python versions, verified |
 | Learning course | **IN PROGRESS** | Levels 1-5 written, 6-9 outstanding |
 | GitHub repository | **READY** | github.com/rishav9713/lzy, public, protected |
+| Website | **READY** | `LZY-Website/`, published to GitHub Pages by the Website workflow |
 | Error handling in LZY | **NOT IMPLEMENTED** | No `try`/`catch`; planned for 0.1.0 |
 | Modules | **NOT IMPLEMENTED** | Planned for 0.2.0 |
 | Standard library | **NOT IMPLEMENTED** | Built-ins only; planned for 0.2.0 |

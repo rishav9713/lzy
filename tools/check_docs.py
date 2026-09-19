@@ -11,6 +11,11 @@ What it checks:
 
 External links (``http://``, ``https://``, ``mailto:``) are not fetched: CI
 should not fail because somebody else's site is down.
+
+Inside ``LZY-Website/``, a link that starts with ``/`` is a page on the
+website, such as ``/install/``, not a file in the repository. Those are
+checked by the website build instead, against the pages it actually produced
+(``LZY-Website/scripts/check-links.mjs``).
 """
 
 from __future__ import annotations
@@ -19,6 +24,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+WEBSITE = ROOT / "LZY-Website"
 
 #: [text](target) - the target stops at a space (which would start a title).
 LINK = re.compile(r"\[(?P<text>[^\]]*)\]\((?P<target>[^)\s]+)\)")
@@ -66,6 +72,9 @@ def check_file(path: Path) -> list[tuple[int, str]]:
         line = text.count("\n", 0, match.start()) + 1
 
         if target.startswith(("http://", "https://", "mailto:", "tel:")):
+            continue
+
+        if target.startswith("/") and WEBSITE in path.parents:
             continue
 
         file_part, _, anchor = target.partition("#")

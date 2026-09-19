@@ -1,0 +1,32 @@
+name: Documentation or website
+description: Something in the documentation or on the website is wrong, missing or unclear
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you. Documentation that says something LZY does not do is a real
+        bug, and so is an explanation that left you confused.
+
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: The page address, or the file in the repository.
+      placeholder: "https://rishav9713.github.io/lzy/docs/functions/"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong or unclear
+      description: Quote the part, and say what you expected or what you did not follow.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: What would be better
+      description: Even a rough wording helps.

@@ -1,0 +1,3 @@
+count = 0
+if count
+    say "some"

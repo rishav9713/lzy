@@ -28,3 +28,17 @@ updates:
     groups:
       github-actions:
         patterns: ["*"]
+
+  # The website's tooling. React and React Router are the only packages that
+  # reach a visitor's browser; the rest run at build time.
+  - package-ecosystem: "npm"
+    directory: "/LZY-Website"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels: ["dependencies", "website"]
+    commit-message:
+      prefix: "chore"
+    groups:
+      website:
+        patterns: ["*"]

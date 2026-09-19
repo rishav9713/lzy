@@ -1,0 +1,3 @@
+total = 0
+name = "Ada"
+say total + name

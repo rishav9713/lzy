@@ -1,0 +1,8 @@
+temperature = 21
+
+if temperature > 25
+    say "Hot"
+else if temperature > 15
+    say "Warm"
+else
+    say "Cold"

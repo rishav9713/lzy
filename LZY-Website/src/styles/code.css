@@ -1,0 +1,214 @@
+/* Code blocks: the same markup whether it came from Markdown or from React. */
+
+.code-block {
+  margin: 1.5rem 0;
+  overflow: hidden;
+  border: 1px solid var(--code-line);
+  border-radius: 12px;
+  background: var(--code-bg);
+  box-shadow: var(--shadow);
+}
+
+.code-block__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2.5rem;
+  padding: 0.25rem 0.5rem 0.25rem 1rem;
+  border-bottom: 1px solid var(--code-line);
+  background: var(--code-bar);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--code-muted);
+}
+
+.code-block__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+.code-block__label::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--code-muted);
+  opacity: 0.6;
+}
+
+.code-block--lzy .code-block__label::before {
+  background: #ff4d5e;
+  opacity: 1;
+  box-shadow: 0 0 10px rgb(255 77 94 / 0.7);
+}
+
+.code-block--broken {
+  border-color: rgb(247 195 92 / 0.35);
+}
+
+.code-block--broken .code-block__label {
+  color: #f7c35c;
+}
+
+.code-block--broken .code-block__label::before {
+  background: #f7c35c;
+  opacity: 1;
+}
+
+.code-block--output .code-block__label::before {
+  background: #4ade9b;
+  opacity: 1;
+}
+
+.code-block--error {
+  border-color: rgb(255 77 94 / 0.35);
+}
+
+.code-block--error .code-block__label {
+  color: #ff7582;
+}
+
+.code-block--error .code-block__label::before {
+  background: #ff4d5e;
+  opacity: 1;
+}
+
+.code-block__pre {
+  margin: 0;
+  padding: 1rem 1.125rem 1.125rem;
+  overflow-x: auto;
+  color: var(--code-fg);
+  font-size: 0.875rem;
+  line-height: 1.7;
+  tab-size: 4;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.2) transparent;
+}
+
+.code-block__pre:focus-visible {
+  outline-offset: -2px;
+  border-radius: 0 0 12px 12px;
+}
+
+.code-block__pre code {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+  white-space: pre;
+}
+
+.copy-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2rem;
+  padding: 0 0.625rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--code-muted);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.copy-button:hover {
+  color: #ffffff;
+  background: rgb(255 255 255 / 0.06);
+  border-color: rgb(255 255 255 / 0.1);
+}
+
+.copy-button--plain {
+  color: var(--fg-muted);
+}
+
+.copy-button--plain:hover {
+  color: var(--fg);
+  background: var(--surface-2);
+  border-color: var(--line);
+}
+
+.copy-button[data-copied='true'] {
+  color: #4ade9b;
+}
+
+/* Tokens */
+.tok-keyword {
+  color: var(--tok-keyword);
+  font-weight: 600;
+}
+.tok-literal {
+  color: var(--tok-literal);
+}
+.tok-string {
+  color: var(--tok-string);
+}
+.tok-escape {
+  color: var(--tok-escape);
+  font-weight: 600;
+}
+.tok-number {
+  color: var(--tok-number);
+}
+.tok-comment {
+  color: var(--tok-comment);
+  font-style: italic;
+}
+.tok-builtin {
+  color: var(--tok-builtin);
+}
+.tok-fn {
+  color: var(--tok-fn);
+  font-weight: 700;
+}
+.tok-call {
+  color: var(--tok-call);
+}
+.tok-op {
+  color: var(--tok-op);
+}
+.tok-punct {
+  color: var(--tok-punct);
+}
+.tok-cmd {
+  color: var(--tok-cmd);
+  font-weight: 600;
+}
+.tok-flag {
+  color: var(--tok-flag);
+}
+.tok-rule {
+  color: var(--tok-rule);
+}
+.tok-err-head {
+  color: var(--err-head);
+  font-weight: 700;
+}
+.tok-err-caret {
+  color: var(--err-caret);
+  font-weight: 700;
+}
+.tok-err-label {
+  color: var(--err-label);
+  font-weight: 600;
+}
+
+/* Inline code outside code blocks */
+:not(pre) > code.inline,
+.prose :not(pre) > code {
+  padding: 0.12em 0.4em;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface-2);
+  font-size: 0.875em;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+.copy-button--plain[data-copied='true'] {
+  color: var(--ok);
+}

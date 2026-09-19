@@ -1,0 +1,10 @@
+dist/
+.ssr/
+node_modules/
+coverage/
+src/data/generated/
+public/
+package-lock.json
+# Markdown is prose, wrapped by hand, and holds LZY that the Python test
+# suite checks. Prettier must not rewrap it.
+*.md
