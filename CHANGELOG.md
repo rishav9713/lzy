@@ -10,7 +10,22 @@ the reason.
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- **The LZY website**, in `LZY-Website/`, published to GitHub Pages by a new
+  `Website` workflow on every merge to `main`. Its facts about LZY — built-in
+  functions, keywords, the command line, limits, examples, versions and the
+  test count — are generated from the interpreter, and many of its pages are
+  the repository's own documents, so the site cannot describe a different LZY.
+- `tools/record_doc_outputs.py` and `tests/integration/test_documented_output.py`:
+  an `output` fence after an `lzy` or `lzy-broken` snippet in any Markdown
+  file must be exactly what LZY prints, and is recorded from the interpreter
+  rather than typed.
+
+### Changed
+
+- `tools/check_docs.py` treats a link starting with `/` inside `LZY-Website/`
+  as a page on the website, which the website build checks instead.
 
 ## [0.0.2] - 2026-09-19
 

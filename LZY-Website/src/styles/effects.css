@@ -1,0 +1,352 @@
+/*
+ * Motion and atmosphere. Everything here is decoration: with animation
+ * turned off (prefers-reduced-motion), each effect settles into a still,
+ * finished state rather than disappearing.
+ */
+
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.fade-mask-b {
+  mask-image: linear-gradient(to bottom, black 55%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent);
+}
+
+.radial-mask {
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 72%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 72%);
+}
+
+/* The receding floor grid behind the hero */
+.hero-floor {
+  position: absolute;
+  inset: auto -30% -10% -30%;
+  height: 70%;
+  perspective: 700px;
+  pointer-events: none;
+}
+
+.hero-floor::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgb(255 51 71 / 0.22) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 51 71 / 0.22) 1px, transparent 1px);
+  background-size: 64px 64px;
+  transform: rotateX(68deg);
+  transform-origin: center top;
+  mask-image: linear-gradient(to bottom, transparent, black 35%, black 60%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 35%, black 60%, transparent);
+  animation: floor-scroll 6s linear infinite;
+}
+
+[data-theme='light'] .hero-floor::before {
+  opacity: 0.55;
+}
+
+/* On a phone the floor's perspective throws long streaks behind the logo. */
+@media (max-width: 639px) {
+  .hero-floor {
+    display: none;
+  }
+}
+
+@keyframes floor-scroll {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 64px;
+  }
+}
+
+.glow-orb {
+  position: absolute;
+  border-radius: 999px;
+  background: radial-gradient(circle, var(--glow), transparent 68%);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: #ff4d5e;
+  box-shadow: 0 0 8px 1px rgb(255 77 94 / 0.8);
+  opacity: 0;
+  animation: drift var(--duration, 9s) ease-in-out var(--delay, 0s) infinite;
+}
+
+@keyframes drift {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  20% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-60px);
+  }
+}
+
+.float {
+  animation: float 7s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.logo-glow {
+  filter: drop-shadow(0 0 28px rgb(255 36 60 / 0.35)) drop-shadow(0 20px 40px rgb(0 0 0 / 0.5));
+}
+
+[data-theme='light'] .logo-glow {
+  filter: drop-shadow(0 16px 30px rgb(200 16 46 / 0.2));
+}
+
+/* Borders that glow on hover, used sparingly on cards */
+.glow-card {
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.glow-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent),
+    0 18px 50px -28px var(--glow);
+  transform: translateY(-2px);
+}
+
+.text-gradient {
+  background: linear-gradient(100deg, #ff3347 0%, #ff6b5c 45%, #ff3347 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shine 8s linear infinite;
+}
+
+[data-theme='light'] .text-gradient {
+  background-image: linear-gradient(100deg, #c8102e 0%, #e0332a 45%, #c8102e 100%);
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+.text-chrome {
+  background: linear-gradient(180deg, #ffffff 0%, #c9c9d4 55%, #8d8d9b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+[data-theme='light'] .text-chrome {
+  background: linear-gradient(180deg, #2a2a33 0%, #111117 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Scroll reveal: content is visible without JavaScript, and animates in with it */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0s);
+}
+
+.js [data-reveal][data-visible='true'] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+  .particle {
+    display: none;
+  }
+}
+
+/*
+ * Pages fade in when the reader navigates, but not on the first load: the
+ * first page is already in the HTML, and animating it would only delay it.
+ */
+.navigated .page-enter {
+  animation: page-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.pop-in {
+  animation: page-in 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.15em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background: #ff4d5e;
+  animation: blink 1.05s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.pulse-dot {
+  position: relative;
+}
+
+.pulse-dot::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  opacity: 0;
+  animation: pulse 2.4s ease-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+.sleepy {
+  animation: sleepy 2.4s ease-in-out infinite;
+}
+
+@keyframes sleepy {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.94);
+    opacity: 0.7;
+  }
+}
+
+/* A faint scanline sheen for terminal windows */
+.scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0.018) 0,
+    rgb(255 255 255 / 0.018) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+/*
+ * The home page's typing effect (see Showcase.tsx). Until the showcase has
+ * scrolled into view, a page running JavaScript keeps the code clipped so it
+ * does not flash before typing. Without JavaScript, or with reduced motion,
+ * none of these rules hide anything.
+ */
+.typing .type-line {
+  display: inline-block;
+}
+
+.js [data-typing-root='pending'] .type-line {
+  clip-path: inset(0 100% 0 0);
+}
+
+.js [data-typing-root='pending'] .type-output {
+  opacity: 0;
+}
+
+.typing[data-typing='run'] .type-line {
+  clip-path: inset(0 100% 0 0);
+  animation: type-line var(--d) steps(var(--n), end) var(--delay) forwards;
+}
+
+@keyframes type-line {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.type-output[data-typing='run'] {
+  opacity: 0;
+  animation: fade-up 0.5s ease var(--delay) forwards;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-typing-root] .type-line,
+  .typing[data-typing='run'] .type-line {
+    clip-path: none;
+    animation: none;
+  }
+  .js [data-typing-root] .type-output,
+  .type-output[data-typing='run'] {
+    opacity: 1;
+    animation: none;
+  }
+}

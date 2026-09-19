@@ -1,0 +1,3 @@
+Total = 10
+say TOTAL
+say total + 5

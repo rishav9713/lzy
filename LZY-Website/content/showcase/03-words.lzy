@@ -1,0 +1,12 @@
+function count_words(sentence)
+    counts = {}
+    for word in split(sentence, " ")
+        if contains(counts, word)
+            counts[word] = counts[word] + 1
+        else
+            counts[word] = 1
+    return counts
+
+counts = count_words("the fox saw the dog and the cat")
+say "the:", counts["the"]
+say "different words:", length(keys(counts))

@@ -1,0 +1,107 @@
+/*
+ * Colour tokens.
+ *
+ * LZY's artwork is neon red on black, so the site is dark first. Red is kept
+ * for things that act: buttons, links, the current page, focus. Everything
+ * else is neutral, so the red keeps meaning something.
+ *
+ * Contrast (WCAG 2.2), measured on --bg / --surface / --surface-2. Every
+ * text colour clears 4.5:1 on all three:
+ *   dark:  fg 17.0 / 16.0 / 15.1   fg-muted 8.3 / 7.8 / 7.4
+ *          fg-subtle 6.0 / 5.6 / 5.3   accent 6.2 / 5.8 / 5.5
+ *          white on accent-strong 4.8, on accent-hover 5.8
+ *   light: fg 17.4 / 18.8 / 16.6   fg-muted 8.5 / 9.1 / 8.0
+ *          fg-subtle 5.8 / 6.3 / 5.5   accent 5.5 / 5.9 / 5.2
+ *          ok 6.1 / 6.6, and 5.4 on its own tinted badge
+ *          white on accent 5.9, on accent-hover 7.8
+ * Code colours clear 5.5:1 on --code-bg and --code-bar.
+ */
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #08080b;
+  --bg-raised: #0d0d12;
+  --surface: #111117;
+  --surface-2: #17171f;
+  --line: rgb(255 255 255 / 0.08);
+  --line-strong: rgb(255 255 255 / 0.15);
+  --fg: #ececf1;
+  --fg-muted: #a6a6b4;
+  --fg-subtle: #8b8b98;
+  --accent: #ff4d5e;
+  --accent-strong: #e11d2e;
+  --accent-hover: #c9162a;
+  --accent-soft: rgb(255 51 71 / 0.12);
+  --on-accent: #ffffff;
+  --glow: rgb(255 36 60 / 0.45);
+  --focus: #ff6b78;
+  --selection: rgb(255 51 71 / 0.35);
+  --ok: #4ade9b;
+  --ok-soft: rgb(74 222 155 / 0.12);
+  --warn: #f7c35c;
+  --warn-soft: rgb(247 195 92 / 0.12);
+  --info: #8ccfff;
+  --info-soft: rgb(140 207 255 / 0.12);
+  --glass: rgb(13 13 18 / 0.72);
+  --grid-line: rgb(255 255 255 / 0.045);
+  --shadow: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 20px 40px -24px rgb(0 0 0 / 0.8);
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f6f6f8;
+  --bg-raised: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f0f0f4;
+  --line: rgb(15 15 25 / 0.1);
+  --line-strong: rgb(15 15 25 / 0.2);
+  --fg: #111117;
+  --fg-muted: #474755;
+  --fg-subtle: #5f5f6d;
+  --accent: #c8102e;
+  --accent-strong: #c8102e;
+  --accent-hover: #a50d25;
+  --accent-soft: rgb(200 16 46 / 0.08);
+  --on-accent: #ffffff;
+  --glow: rgb(200 16 46 / 0.25);
+  --focus: #c8102e;
+  --selection: rgb(200 16 46 / 0.18);
+  --ok: #0b6b40;
+  --ok-soft: rgb(15 122 74 / 0.1);
+  --warn: #8a5a00;
+  --warn-soft: rgb(176 115 0 / 0.12);
+  --info: #0b5fa3;
+  --info-soft: rgb(11 95 163 / 0.1);
+  --glass: rgb(255 255 255 / 0.78);
+  --grid-line: rgb(15 15 25 / 0.05);
+  --shadow: 0 1px 2px rgb(15 15 25 / 0.06), 0 18px 36px -24px rgb(15 15 25 / 0.35);
+}
+
+/*
+ * Code is always shown on a dark panel, in both themes, like a terminal.
+ * These colours are chosen against --code-bg only.
+ */
+:root {
+  --code-bg: #0b0b10;
+  --code-bar: #121219;
+  --code-line: rgb(255 255 255 / 0.08);
+  --code-fg: #e4e4ec;
+  --code-muted: #9a9aab;
+  --tok-keyword: #ff6b7a;
+  --tok-literal: #ffa266;
+  --tok-string: #f3d88f;
+  --tok-escape: #ffb86b;
+  --tok-number: #8fd3ff;
+  --tok-comment: #8a8a9c;
+  --tok-builtin: #7ee0c3;
+  --tok-fn: #ffffff;
+  --tok-call: #f0f0f6;
+  --tok-op: #ff9aa3;
+  --tok-punct: #a9a9ba;
+  --tok-cmd: #7ee0c3;
+  --tok-flag: #c6b2ff;
+  --tok-rule: #e4e4ec;
+  --err-head: #ff7582;
+  --err-caret: #ff4d5e;
+  --err-label: #f7c35c;
+}

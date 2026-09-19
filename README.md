@@ -12,6 +12,15 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue" alt="Apache-2.0"></a>
   <img src="https://img.shields.io/badge/python-3.9%20%E2%80%93%203.13-blue" alt="Python 3.9 to 3.13">
   <img src="https://img.shields.io/badge/dependencies-none-brightgreen" alt="No runtime dependencies">
+  <a href="https://github.com/rishav9713/lzy/actions/workflows/deploy-pages.yml"><img src="https://github.com/rishav9713/lzy/actions/workflows/deploy-pages.yml/badge.svg?branch=main" alt="Website"></a>
+</p>
+
+<p align="center">
+  <a href="https://rishav9713.github.io/lzy/"><strong>Website</strong></a> ·
+  <a href="https://rishav9713.github.io/lzy/docs/">Documentation</a> ·
+  <a href="https://rishav9713.github.io/lzy/install/">Install</a> ·
+  <a href="https://rishav9713.github.io/lzy/examples/">Examples</a> ·
+  <a href="CONTRIBUTING.md">Contributing</a>
 </p>
 
 ---
@@ -33,7 +42,7 @@ for number in numbers
 say "Total:", total
 ```
 
-> **Status: 0.0.1 — early.** The core language works and is tested, but LZY
+> **Status: 0.0.2 — early.** The core language works and is tested, but LZY
 > has no modules, no error handling, no file or network access, and no
 > standard library beyond its built-in functions. It is a good time to read
 > it, try it and argue with its design. It is not yet a good time to build
@@ -98,7 +107,9 @@ parts that are genuinely debatable.
 ## Installing
 
 LZY needs **Python 3.9 or newer** and nothing else — the interpreter uses only
-the Python standard library.
+the Python standard library. LZY is not on PyPI: install a release from
+GitHub, or from source. The [installation guide](https://rishav9713.github.io/lzy/install/)
+has the command for the current release on every operating system.
 
 ```bash
 git clone https://github.com/rishav9713/lzy
@@ -299,7 +310,8 @@ The full, honest list is in [PROJECT_STATUS.md](PROJECT_STATUS.md), and
 
 | Version | Focus |
 |---|---|
-| **0.0.1** | Language foundation — *this release* |
+| **0.0.1** | Language foundation |
+| **0.0.2** | Correctness fixes — *the current release* |
 | 0.1.0 | Error handling, a formatter, and the core language declared stable |
 | 0.2.0 | Modules and a real standard library |
 | 0.3.0 | Files, JSON, HTTP, and applications |
@@ -313,6 +325,11 @@ each one ships.
 ---
 
 ## Documentation
+
+The **[website](https://rishav9713.github.io/lzy/)** brings all of it
+together, with search: a guide to every part of the language, the course, a
+reference for every built-in function, and every example with its real
+output. Its source is in [`LZY-Website/`](LZY-Website/).
 
 - [SPEC.md](SPEC.md) — the language, defined
 - [docs/spec/grammar.ebnf](docs/spec/grammar.ebnf) — the formal grammar

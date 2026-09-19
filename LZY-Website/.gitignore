@@ -1,0 +1,17 @@
+# Dependencies and build output
+node_modules/
+dist/
+.ssr/
+
+# Generated from the interpreter by scripts/generate_data.py on every
+# dev, build and test run. Never edit by hand; never commit.
+src/data/generated/
+
+# Test and tooling output
+coverage/
+*.tsbuildinfo
+
+# Secrets - never commit these
+.env
+.env.*
+!.env.example
