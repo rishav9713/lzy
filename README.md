@@ -87,7 +87,7 @@ LZY needs **Python 3.9 or newer** and nothing else — the interpreter uses only
 the Python standard library.
 
 ```bash
-git clone https://github.com/lzy-lang/lzy
+git clone https://github.com/rishav9713/lzy
 cd lzy
 pip install -e .
 ```
@@ -312,7 +312,7 @@ each one ships.
 ## Development
 
 ```bash
-git clone https://github.com/lzy-lang/lzy
+git clone https://github.com/rishav9713/lzy
 cd lzy
 pip install -e ".[dev]"
 
@@ -363,4 +363,9 @@ Start with [CONTRIBUTING.md](CONTRIBUTING.md) and
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+Apache License 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
+
+Apache-2.0 was chosen over MIT for its explicit patent grant, which
+matters more for a programming language than the brevity of MIT does.
+The reasoning is recorded in
+[docs/OWNER_DECISIONS.md](docs/OWNER_DECISIONS.md#d-001-licence-apache-20).

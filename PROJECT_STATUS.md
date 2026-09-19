@@ -165,14 +165,11 @@ push. Nothing else is waiting on this.
 
 ## Pending owner decisions
 
-Two are open. Both are written up in
-[docs/OWNER_DECISIONS.md](docs/OWNER_DECISIONS.md) with options and a
-recommendation:
+None. Both decisions that were open at 0.0.1 were made on 2026-09-19 and are
+recorded in [docs/OWNER_DECISIONS.md](docs/OWNER_DECISIONS.md):
 
-- **D-001** — Confirm MIT as the licence, or move to Apache-2.0 for its
-  patent grant. This gets harder after the first outside contribution.
-- **D-002** — Confirm the copyright holder named in `LICENSE`, which is
-  currently "The LZY Authors".
+- **D-001** — the licence is **Apache-2.0**, chosen for its patent grant.
+- **D-002** — the copyright holder is **Rishav Kumar**.
 
 ---
 

@@ -9,7 +9,7 @@ description = "LZY - a programming language for complex logic and simple code."
 readme = "README.md"
 requires-python = ">=3.9"
 license = { file = "LICENSE" }
-authors = [{ name = "The LZY Authors" }]
+authors = [{ name = "Rishav Kumar" }]
 keywords = ["programming-language", "interpreter", "education", "lzy"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -41,11 +41,11 @@ dev = [
 lzy = "lzy.cli.main:main"
 
 [project.urls]
-Homepage = "https://github.com/lzy-lang/lzy"
-Documentation = "https://github.com/lzy-lang/lzy/tree/main/docs"
-Source = "https://github.com/lzy-lang/lzy"
-Issues = "https://github.com/lzy-lang/lzy/issues"
-Changelog = "https://github.com/lzy-lang/lzy/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/rishav9713/lzy"
+Documentation = "https://github.com/rishav9713/lzy/tree/main/docs"
+Source = "https://github.com/rishav9713/lzy"
+Issues = "https://github.com/rishav9713/lzy/issues"
+Changelog = "https://github.com/rishav9713/lzy/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 include = ["lzy*"]

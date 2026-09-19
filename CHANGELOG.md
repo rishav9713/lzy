@@ -75,6 +75,17 @@ network; see [PROJECT_STATUS.md](PROJECT_STATUS.md) for the honest list.
   documentation shows.
 - CI on Ubuntu, macOS and Windows against Python 3.9 to 3.13.
 
+### Changed
+
+- The project is licensed under **Apache License 2.0**, not MIT. Apache-2.0
+  was chosen for its explicit patent grant, which matters more for a
+  programming language than MIT's brevity does. A `NOTICE` file carries the
+  copyright attribution that Apache-2.0 section 4(d) requires downstream
+  users to reproduce. Decided before the first outside contribution, which
+  was the last point the change could be made without every contributor's
+  consent. See `docs/OWNER_DECISIONS.md`, D-001.
+- The copyright holder is **Rishav Kumar**. See D-002.
+
 ### Security
 
 - No file, network, process or environment access exists in the language, so
@@ -107,5 +118,5 @@ test in `tests/regression/test_regressions.py`.
   to show.
 - Python's recursion limit stayed raised after a program finished.
 
-[Unreleased]: https://github.com/lzy-lang/lzy/compare/v0.0.1...HEAD
-[0.0.1]: https://github.com/lzy-lang/lzy/releases/tag/v0.0.1
+[Unreleased]: https://github.com/rishav9713/lzy/compare/v0.0.1...HEAD
+[0.0.1]: https://github.com/rishav9713/lzy/releases/tag/v0.0.1

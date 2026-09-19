@@ -1,0 +1,14 @@
+LZY Programming Language
+Copyright 2026 Rishav Kumar
+
+This product includes software developed by Rishav Kumar and the LZY
+contributors.
+
+Licensed under the Apache License, Version 2.0. You may obtain a copy of the
+License at:
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+The LZY interpreter has no third-party runtime dependencies. It uses only the
+Python standard library, so this notice covers the whole of the distributed
+work.

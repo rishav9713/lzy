@@ -13,7 +13,7 @@ By taking part you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 You need Python 3.9 or newer. Nothing else.
 
 ```bash
-git clone https://github.com/lzy-lang/lzy
+git clone https://github.com/rishav9713/lzy
 cd lzy
 pip install -e ".[dev]"
 

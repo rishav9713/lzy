@@ -11,67 +11,8 @@ follows them without asking again unless new evidence turns up.
 
 ## Open
 
-### D-001 — Which licence?
-
-**Question.** Stay with MIT, or move to Apache-2.0?
-
-**Context.** `LICENSE` currently holds the MIT licence, chosen so that 0.0.1
-had a real, exactly-reproduced licence rather than a placeholder. Relicensing
-is easy today, because every line was written for this repository and there
-are no outside contributors. It becomes hard as soon as someone else's code
-is merged, because each of them has to agree.
-
-**Options.**
-
-| | MIT | Apache-2.0 |
-|---|---|---|
-| Length | Short, everyone has read it | Long, fewer people read it |
-| Permissive | Yes | Yes |
-| Patent grant | **No explicit grant** | **Explicit grant from contributors** |
-| Patent retaliation | None | A contributor who sues over patents loses their licence |
-| Common for languages | Some | Swift, Kotlin, Rust (dual MIT/Apache) |
-
-**Technical impact.** None. No code changes either way.
-
-**Security impact.** None directly. Apache-2.0's patent grant slightly
-reduces legal risk for organisations adopting LZY, which affects who is
-willing to use it.
-
-**Recommendation.** **Move to Apache-2.0 before accepting the first outside
-contribution.** For a programming language, an explicit patent grant is worth
-more than the brevity of MIT, and this is the last cheap moment to change it.
-If you would rather keep MIT for its simplicity, that is a defensible choice
-— but make it deliberately, now, rather than by default.
-
-**Decision.** *Not yet made.*
-
----
-
-### D-002 — Who is the copyright holder?
-
-**Question.** `LICENSE` says `Copyright (c) 2026 The LZY Authors`. Should it
-name you, or an organisation?
-
-**Context.** "The LZY Authors" was used because it is accurate, works for a
-multi-contributor project, and avoids asserting a legal name on your behalf.
-Many large projects do exactly this. Some prefer a named individual or a
-company so that ownership is unambiguous.
-
-**Options.**
-
-1. **Keep "The LZY Authors".** Standard for community projects; no change
-   needed as contributors join.
-2. **Name yourself.** Unambiguous ownership; you would add contributors or
-   keep a `NOTICE`/`AUTHORS` file.
-3. **Name an organisation**, if LZY is going to live under one.
-
-**Technical impact.** None.
-
-**Recommendation.** Keep option 1 unless you have a specific reason to want
-your name in the file. It is the least maintenance and the most usual choice
-for an open-source language.
-
-**Decision.** *Not yet made.*
+None. Both decisions that were open at 0.0.1 have been made and are recorded
+below.
 
 ---
 
@@ -80,6 +21,49 @@ for an open-source language.
 These were decided while building 0.0.1. They are recorded so they are not
 reopened without new evidence. Each is also reflected in
 [SPEC.md](../SPEC.md).
+
+### D-001 — Licence: Apache-2.0 ✅
+
+**Decided:** Apache License 2.0, on 2026-09-19. The owner asked for a
+recommendation to be chosen, and Apache-2.0 was the standing recommendation.
+
+**Why.** For a programming language, the explicit patent grant in Apache-2.0
+is worth more than the brevity of MIT. Section 3 grants every user a patent
+licence from every contributor, and withdraws it from anyone who sues over
+patents — which is exactly the protection an organisation looks for before
+adopting a new language. Swift, Kotlin and Rust all landed in the same place.
+
+This was decided before the first outside contribution, which was the last
+moment it could be changed without every contributor's consent.
+
+**What changed.** `LICENSE` now holds the verbatim Apache-2.0 text, with its
+appendix left as the template as Apache recommends. A `NOTICE` file carries
+the copyright attribution, which Apache-2.0 section 4(d) requires
+downstream users to reproduce.
+
+**Note.** `pyproject.toml` had already been written with the
+`License :: OSI Approved :: Apache Software License` classifier while
+`LICENSE` still held MIT text. That mismatch existed between the two 0.0.1
+commits and is resolved by this decision; the metadata and the licence file
+now agree.
+
+---
+
+### D-002 — Copyright holder: Rishav Kumar ✅
+
+**Decided:** `Copyright 2026 Rishav Kumar`, on 2026-09-19, by the owner.
+
+**Why.** The owner asked to be named. Ownership is then unambiguous, which
+matters if the project is ever relicensed, transferred or donated to a
+foundation.
+
+**What changed.** The `NOTICE` file names Rishav Kumar as the copyright
+holder, and `pyproject.toml` names him as the author. Later contributors
+keep copyright in their own contributions under Apache-2.0 section 5; if a
+list of them is ever wanted, it goes in an `AUTHORS` file rather than in
+`NOTICE`.
+
+---
 
 ### D-003 — Conditions require a real yes/no value ✅
 
