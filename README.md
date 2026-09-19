@@ -1,6 +1,20 @@
-# LZY
+<p align="center">
+  <img src="Logos/lzy-banner.png" alt="LZY - Code Less. Do More." width="640">
+</p>
 
-**Complex logic. Simple code.**
+<h1 align="center">LZY</h1>
+
+<p align="center"><strong>Complex Logic. Simple Code.</strong></p>
+
+<p align="center">
+  <a href="https://github.com/rishav9713/lzy/actions/workflows/ci.yml"><img src="https://github.com/rishav9713/lzy/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI"></a>
+  <a href="https://github.com/rishav9713/lzy/releases/latest"><img src="https://img.shields.io/github/v/release/rishav9713/lzy?sort=semver" alt="Latest release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue" alt="Apache-2.0"></a>
+  <img src="https://img.shields.io/badge/python-3.9%20%E2%80%93%203.13-blue" alt="Python 3.9 to 3.13">
+  <img src="https://img.shields.io/badge/dependencies-none-brightgreen" alt="No runtime dependencies">
+</p>
+
+---
 
 LZY is an open-source programming language built around one idea: a program
 should say what it does in words a person can read aloud.
@@ -358,6 +372,15 @@ Contributions are welcome, especially:
 
 Start with [CONTRIBUTING.md](CONTRIBUTING.md) and
 [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+
+---
+
+## Brand
+
+The sloth, the banner and the mascot live in [`Logos/`](Logos/), with a note
+on how to use them. LZY carries two lines on purpose: **Complex Logic. Simple
+Code.** is the tagline, used by the specification and the documentation, and
+**Code Less. Do More.** is the shorter line on the artwork.
 
 ---
 
