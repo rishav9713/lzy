@@ -10,6 +10,9 @@ updates:
     labels: ["dependencies", "security"]
     commit-message:
       prefix: "chore"
+    groups:
+      dev-dependencies:
+        patterns: ["*"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -19,3 +22,9 @@ updates:
     labels: ["dependencies", "ci", "security"]
     commit-message:
       prefix: "ci"
+    # One pull request for all action bumps. Ungrouped, three bumps to the
+    # same workflow opened three PRs, each running the full 19-job matrix,
+    # and each going stale the moment another one merged.
+    groups:
+      github-actions:
+        patterns: ["*"]
