@@ -5,7 +5,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lzy-lang"
-version = "0.0.1"
+# The version lives in lzy/__init__.py so there is only one place to
+# change it, and no way for the package and its metadata to disagree.
+dynamic = ["version"]
 description = "LZY - a programming language for complex logic and simple code."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -49,6 +51,9 @@ Documentation = "https://github.com/rishav9713/lzy/tree/main/docs"
 Source = "https://github.com/rishav9713/lzy"
 Issues = "https://github.com/rishav9713/lzy/issues"
 Changelog = "https://github.com/rishav9713/lzy/blob/main/CHANGELOG.md"
+
+[tool.setuptools.dynamic]
+version = { attr = "lzy.__version__" }
 
 [tool.setuptools.packages.find]
 include = ["lzy*"]
