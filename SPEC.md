@@ -627,9 +627,26 @@ produces a normal LZY error.
 | Indentation depth | 64 | 32 |
 | Bracket depth | 64 | 32 |
 | Parser nesting depth | 200 | 100 |
+| Syntax tree depth | 5,000 | 1,000 |
+| Steps held open while running | 5,000 | 1,000 |
 | Function calls waiting at once | 400 | 100 |
 | Characters printed by one `say` | 1,000,000 | 100,000 |
 | Numbers built by one `range` | 10,000,000 | 10,000,000 |
+
+**Syntax tree depth** is separate from parser nesting depth, and the reason is
+worth knowing. A long chain like `1 + 1 + 1 + ...` is *parsed* by a loop, so
+the parser never nests deeply — but the tree it builds gains a level per
+operator, and working that tree out later does nest. The tree is therefore
+measured directly once parsing finishes, which means `lzy check` reports it
+too.
+
+**Steps held open while running** counts everything the interpreter currently
+has part-finished. It catches shapes the other two miss, such as many
+moderately deep calls each holding a moderately deep expression open.
+
+LZY runs your program on a thread whose stack size it sets itself, so these
+limits mean the same thing on every operating system rather than depending on
+whatever stack the platform happened to give.
 
 These are a safety net, not a sandbox. See SECURITY.md.
 

@@ -62,6 +62,7 @@ from lzy.interpreter.values import (
     normalise_number,
     show,
 )
+from lzy.runtime.execution import run_with_stack
 from lzy.runtime.limits import Limits
 
 #: Names from other languages, mapped to the LZY way of doing the same thing.
@@ -136,6 +137,8 @@ class Interpreter:
         self.globals = Environment(None, "global")
         self.environment = self.globals
         self.call_depth = 0
+        #: Total live nesting, counted in execute() and evaluate().
+        self.depth = 0
         self._install_builtins()
 
     def _install_builtins(self) -> None:
@@ -147,9 +150,19 @@ class Interpreter:
     # ------------------------------------------------------------------
 
     def run(self, program: Program) -> None:
-        """Run a whole program. Raises :class:`LzyError` on failure."""
+        """Run a whole program. Raises :class:`LzyError` on failure.
+
+        The work happens on a thread with a stack LZY chooses, so that the
+        depth limits in :mod:`lzy.runtime.limits` mean the same thing on every
+        platform. See :mod:`lzy.runtime.execution` for why that is necessary
+        rather than merely tidy.
+        """
+        return run_with_stack(lambda: self._run(program), self.limits)
+
+    def _run(self, program: Program) -> None:
         previous_limit = sys.getrecursionlimit()
         sys.setrecursionlimit(self.limits.python_recursion_limit)
+        self.depth = 0
         try:
             self.execute_block(program.body, self.globals)
         except _Return as signal:
@@ -180,8 +193,28 @@ class Interpreter:
             sys.setrecursionlimit(previous_limit)
 
     def evaluate_source_expression(self, expression: Expression):
-        """Evaluate a single expression in the global scope (used by the REPL)."""
-        return self.evaluate(expression)
+        """Evaluate one expression in the global scope, as the REPL does.
+
+        Goes through the same controlled stack and recursion limit as a whole
+        program: a line typed at the prompt can recurse just as deeply as a
+        line in a file, so it needs the same protection.
+        """
+        return run_with_stack(lambda: self._evaluate_top_level(expression), self.limits)
+
+    def _evaluate_top_level(self, expression: Expression):
+        previous_limit = sys.getrecursionlimit()
+        sys.setrecursionlimit(self.limits.python_recursion_limit)
+        self.depth = 0
+        try:
+            return self.evaluate(expression)
+        except RecursionError:
+            raise LzyLimitError(
+                "This went too deep for LZY to keep track of.",
+                getattr(expression, "span", None),
+                hint="Check for a function or a value that keeps nesting without end.",
+            ) from None
+        finally:
+            sys.setrecursionlimit(previous_limit)
 
     # ------------------------------------------------------------------
     # Statements
@@ -203,7 +236,14 @@ class Interpreter:
                 f"LZY does not yet know how to run a {type(statement).__name__}.",
                 getattr(statement, "span", None),
             )
-        method(self, statement)
+        self.depth += 1
+        if self.depth > self.limits.max_evaluation_depth:
+            self.depth -= 1
+            raise self._too_deep(getattr(statement, "span", None))
+        try:
+            method(self, statement)
+        finally:
+            self.depth -= 1
 
     def _execute_say(self, statement: Say) -> None:
         parts = [show(self.evaluate(value)) for value in statement.values]
@@ -330,7 +370,30 @@ class Interpreter:
                 f"{type(expression).__name__}.",
                 getattr(expression, "span", None),
             )
-        return method(self, expression)
+        self.depth += 1
+        if self.depth > self.limits.max_evaluation_depth:
+            self.depth -= 1
+            raise self._too_deep(getattr(expression, "span", None))
+        try:
+            return method(self, expression)
+        finally:
+            self.depth -= 1
+
+    def _too_deep(self, span) -> LzyLimitError:
+        """Total live nesting hit its ceiling.
+
+        This is the backstop behind ``max_call_depth`` and ``max_ast_depth``,
+        and catches shapes those two miss, such as many moderately deep calls
+        each holding a moderately deep expression open.
+        """
+        return LzyLimitError(
+            "This program is working on too many things at once.",
+            span,
+            hint=(
+                f"LZY holds up to {self.limits.max_evaluation_depth:,} steps open at "
+                "a time. This usually means something is nesting without end."
+            ),
+        )
 
     def _evaluate_literal(self, expression: Literal):
         return expression.value

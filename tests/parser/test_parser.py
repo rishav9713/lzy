@@ -238,6 +238,21 @@ class TestNesting:
         assert "deeply" in err.message
 
     def test_long_chain_of_operators_is_handled(self):
-        # Left-associative parsing means this is a loop, not deep recursion.
+        # Parsing this is a loop, but the tree it builds is 2000 levels deep
+        # and evaluating it recurses once per level. See tests/regression,
+        # fixed bug 007: an earlier version of this comment claimed the whole
+        # thing was flat, and a 1 MB Windows stack proved otherwise.
         source = "say " + " + ".join(["1"] * 2000)
         assert output(source) == ["2000"]
+
+    def test_an_absurdly_long_chain_is_refused_rather_than_crashing(self):
+        source = "say " + " + ".join(["1"] * 8000)
+        err = error(source)
+        assert isinstance(err, LzySyntaxError)
+        assert "nests too deeply" in err.message
+        assert "5,000" in err.hint
+
+    def test_the_depth_limit_counts_nesting_not_program_length(self):
+        # 5000 statements in a row is shallow, and must stay allowed.
+        program = "\n".join(["say 1"] * 5000)
+        assert output(program) == ["1"] * 5000

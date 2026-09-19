@@ -137,11 +137,23 @@ Known weaknesses in LZY's own implementation, and what is done about them:
 | Risk | Mitigation | Status |
 |---|---|---|
 | Parser stack exhaustion on nested input | Depth limits in the lexer and the parser | Done, tested |
+| Deep evaluation on a shallow-parsing shape | Syntax tree depth measured after parsing | Done, tested |
+| Deep evaluation across many calls | Total live-nesting limit while running | Done, tested |
 | Runaway recursion in an LZY program | Call-depth limit, and Python's limit restored afterwards | Done, tested |
+| A platform stack too small for LZY's own limits | Programs run on a thread with a stack LZY sets | Done, tested |
 | A value that contains itself | Depth limits in `equal()` and `inspect()` | Done, tested |
 | Oversized source or output | Character limits, both configurable | Done, tested |
 | Memory exhaustion by allocation | Only partly addressed — `range` is capped, other growth is not | **Open** |
 | Unbounded run time | Not addressed; a loop runs until stopped | **Open by design** |
+
+Three of those rows exist because of a real crash rather than a theory. The
+first CI run found that `say 1 + 1 + 1 + ...` killed the interpreter process
+on Windows with CPython 3.9 and 3.10, which falsified the claim above that
+LZY always reports rather than crashes. Raising Python's recursion limit does
+not create stack — it only removes CPython's guard — and Windows gives the
+main thread 1 MB. The fix bounds the syntax tree and the live nesting
+directly, and runs programs on a stack LZY chooses. It is recorded as bug 007
+in `tests/regression/test_regressions.py`.
 
 The two open items are the reason the sandbox warning above exists. They will
 be addressed before the playground ships, because the playground is the first
