@@ -145,21 +145,31 @@ isolation. See [SECURITY.md](SECURITY.md).
 
 **B-1: The public GitHub repository does not exist yet.**
 
-The GitHub CLI (`gh`) is not installed in the development environment and no
-GitHub credentials are configured, so the repository could not be created or
-configured from a session. Everything is committed locally and ready to push.
+Everything is committed locally on `main` and tagged `v0.0.1`. The repository
+name `rishav9713/lzy` was checked and is free. The GitHub CLI has been
+installed (gh 2.101.0), but **it is not authenticated**, and authenticating
+needs a browser sign-in that only the owner can complete. Asking for a token
+in chat is not an acceptable substitute.
 
-What the owner needs to do, once:
+What the owner does, once:
 
-1. Create a **public** repository (the preferred name is `lzy`; check for a
-   clash first).
-2. `git remote add origin <url>` and `git push -u origin main`.
-3. Turn on Issues, Discussions, Dependabot, secret scanning and code
-   scanning.
-4. Protect `main`: require a pull request and require the CI check to pass.
+```bash
+gh auth login
+```
 
-The workflows in `.github/` are written and will start running on the first
-push. Nothing else is waiting on this.
+Choose: GitHub.com -> HTTPS -> authenticate in browser. After that, the rest
+can be done from a session:
+
+1. `gh repo create rishav9713/lzy --public --source=. --remote=origin --push`
+2. `git push origin v0.0.1`
+3. `gh release create v0.0.1 --notes-file docs/releases/v0.0.1.md` with the
+   wheel, sdist and SHA256SUMS.txt attached
+4. Enable Issues, Discussions, Dependabot, secret scanning and code
+   scanning; protect `main` behind a passing CI check
+
+Note for awareness, not a conflict: an unrelated `lambdazy/lzy` exists on
+GitHub with a different owner, and the owner's own `lzy-xss` repo is an
+unrelated 2023 project.
 
 ---
 
