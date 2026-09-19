@@ -75,6 +75,33 @@ describe('the mobile menu', () => {
     expect(within(menu).getByRole('link', { name: /examples/i })).toBeInTheDocument();
     await user.keyboard('{Escape}');
     expect(screen.queryByRole('dialog', { name: 'Menu' })).not.toBeInTheDocument();
+    expect(open).toHaveFocus();
+  });
+
+  it('keeps Tab inside the open menu', async () => {
+    const user = userEvent.setup();
+    await renderAt('/');
+    await user.click(screen.getByRole('button', { name: 'Open menu' }));
+    const menu = screen.getByRole('dialog', { name: 'Menu' });
+    for (let step = 0; step < 20; step += 1) {
+      await user.tab();
+      expect(menu).toContainElement(document.activeElement as HTMLElement);
+    }
+  });
+});
+
+describe('the documentation drawer', () => {
+  it('opens, keeps focus inside, and returns it on close', async () => {
+    const user = userEvent.setup();
+    await renderAt('/docs/functions/');
+    const open = screen.getByRole('button', { name: /documentation menu/i });
+    await user.click(open);
+    const drawer = screen.getByRole('dialog', { name: 'Documentation menu' });
+    await user.tab();
+    expect(drawer).toContainElement(document.activeElement as HTMLElement);
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog', { name: 'Documentation menu' })).not.toBeInTheDocument();
+    expect(open).toHaveFocus();
   });
 });
 

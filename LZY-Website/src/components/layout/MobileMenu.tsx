@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router';
 
 import { mainNav } from '@/content/navigation';
+import { useDialogFocus } from '@/hooks/useDialogFocus';
 import { links } from '@/data/site';
 import { cx } from '@/lib/cx';
 
@@ -19,31 +20,7 @@ export function MobileMenu({ onClose }: { onClose: () => void }) {
     if (pathname !== firstPath.current) onClose();
   }, [pathname, onClose]);
 
-  useEffect(() => {
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    panel.current?.querySelector<HTMLElement>('button, a')?.focus();
-
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-      if (event.key !== 'Tab' || !panel.current) return;
-      const focusable = panel.current.querySelectorAll<HTMLElement>('a[href], button');
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last?.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first?.focus();
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => {
-      document.body.style.overflow = previous;
-      window.removeEventListener('keydown', onKey);
-    };
-  }, [onClose]);
+  useDialogFocus(panel, onClose);
 
   const secondary = [
     { label: 'Getting started', to: '/getting-started/' },
