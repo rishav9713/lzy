@@ -38,7 +38,7 @@ dev = [
     "coverage>=7.0",
     # Pinned to a minor series on purpose: an unpinned linter turns "ruff
     # added a rule" into "CI is red on a branch that changed nothing".
-    "ruff>=0.16,<0.17",
+    "ruff>=0.16,<0.18",
     "build>=1.0",
 ]
 
